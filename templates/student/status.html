@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-list-check"></i> My Grievances</h4>
+{% if grievances %}
+  {% for g in grievances %}
+  <div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'warning' }}">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
+          {{ g.priority }} Priority
+        </span>
+        <span class="badge bg-secondary">{{ g.status }}</span>
+        <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+      </div>
+      <p class="mb-1"><strong>Category:</strong> {{ g.category }}</p>
+      <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
+      <p class="mb-2"><strong>Summary:</strong> {{ g.description }}</p>
+
+      <!-- Voting -->
+      <div class="mt-2 p-2 bg-light rounded">
+        <p class="mb-2 small fw-semibold">Are other students facing the same issue?</p>
+        <form method="POST" action="/vote/{{ g.id }}" class="d-flex gap-2">
+          <button name="vote" value="yes" class="btn btn-sm btn-outline-success">
+            👍 Yes ({{ g.yes_votes }})
+          </button>
+          <button name="vote" value="no" class="btn btn-sm btn-outline-secondary">
+            👎 No ({{ g.no_votes }})
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">You haven't submitted any grievances yet.</div>
+{% endif %}
+<a href="/dashboard" class="btn btn-primary mt-2"><i class="bi bi-plus-circle"></i> Submit New Grievance</a>
+{% endblock %}

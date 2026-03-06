@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6">
+    <div class="card shadow">
+      <div class="card-body p-4">
+        <h4 class="mb-4 text-center fw-bold"><i class="bi bi-person-plus"></i> Register</h4>
+        <form method="POST" action="/register">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">College Email</label>
+              <input type="email" name="email" class="form-control" placeholder="name@srcc.ac.in" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Roll Number</label>
+              <input type="text" name="roll_no" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Department</label>
+              <select name="department" class="form-select" required>
+                <option value="">Select</option>
+                <option>CSE</option>
+                <option>ECE</option>
+                <option>EEE</option>
+                <option>MECH</option>
+                <option>CIVIL</option>
+                <option>IT</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Class</label>
+              <input type="text" name="class_name" class="form-control" placeholder="e.g. II B.E" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Section</label>
+              <input type="text" name="section" class="form-control" placeholder="e.g. A" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary w-100">Register</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <p class="text-center mb-0">Already registered? <a href="/login">Login here</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

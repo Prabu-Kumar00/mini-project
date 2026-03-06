@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-check2-circle"></i> Coordinator Panel — Pending Approvals</h4>
+{% if grievances %}
+  {% for g in grievances %}
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between mb-2">
+        <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
+          {{ g.priority }} Priority
+        </span>
+        <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+      </div>
+      <p class="mb-1"><strong>Student:</strong> {{ g.student.name }} ({{ g.student.roll_no }}) — {{ g.student.department }}</p>
+      <p class="mb-1"><strong>Category:</strong> {{ g.category }} → <strong>Route To:</strong> {{ g.route_to }}</p>
+      <p class="mb-3"><strong>Description:</strong> {{ g.description }}</p>
+      {% if g.image_path %}
+        <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3" style="max-height:200px">
+      {% endif %}
+      <form method="POST" action="/coordinator/action/{{ g.id }}" class="d-flex gap-2">
+        <button name="decision" value="accept" class="btn btn-success btn-sm">
+          <i class="bi bi-check-lg"></i> Accept
+        </button>
+        <button name="decision" value="reject" class="btn btn-danger btn-sm">
+          <i class="bi bi-x-lg"></i> Reject
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-success"><i class="bi bi-check-all"></i> No pending grievances!</div>
+{% endif %}
+{% endblock %}

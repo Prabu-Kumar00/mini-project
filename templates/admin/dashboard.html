@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h4>
+{% if grievances %}
+  {% for g in grievances %}
+  <div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'secondary' }}">
+    <div class="card-body">
+      <div class="d-flex justify-content-between mb-2">
+        <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
+          {{ g.priority }} Priority
+        </span>
+        <span class="badge bg-info text-dark">{{ g.category }}</span>
+        <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+      </div>
+
+      <!-- Student Details -->
+      <div class="bg-light p-2 rounded mb-3">
+        <strong>Student Details</strong>
+        <div class="row mt-1 small">
+          <div class="col-md-3"><b>Name:</b> {{ g.student.name }}</div>
+          <div class="col-md-3"><b>Roll No:</b> {{ g.student.roll_no }}</div>
+          <div class="col-md-3"><b>Dept:</b> {{ g.student.department }}</div>
+          <div class="col-md-3"><b>Class:</b> {{ g.student.class_name }} - {{ g.student.section }}</div>
+        </div>
+      </div>
+
+      <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
+      <p class="mb-2"><strong>Description:</strong> {{ g.description }}</p>
+      {% if g.image_path %}
+        <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3" style="max-height:200px">
+      {% endif %}
+      <p class="small text-muted mb-2">
+        <i class="bi bi-hand-thumbs-up"></i> {{ g.yes_votes }} others affected &nbsp;|&nbsp;
+        <i class="bi bi-hand-thumbs-down"></i> {{ g.no_votes }} not affected
+      </p>
+
+      <!-- Reply + Status -->
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <button class="btn btn-outline-primary btn-sm"
+          onclick="navigator.clipboard.writeText('{{ g.student.email }}'); alert('Email copied!')">
+          <i class="bi bi-reply"></i> Reply via Mail (Copy Email)
+        </button>
+        <form method="POST" action="/admin/update/{{ g.id }}" class="d-flex gap-2">
+          <select name="status" class="form-select form-select-sm" style="width:auto">
+            <option>Approved</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+          <button type="submit" class="btn btn-sm btn-dark">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">No approved grievances to display.</div>
+{% endif %}
+{% endblock %}
