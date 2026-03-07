@@ -2,37 +2,74 @@
 {% block content %}
 <h4 class="fw-bold mb-4"><i class="bi bi-list-check"></i> My Grievances</h4>
 {% if grievances %}
-  {% for g in grievances %}
-  <div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'warning' }}">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
-          {{ g.priority }} Priority
-        </span>
-        <span class="badge bg-secondary">{{ g.status }}</span>
-        <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
-      </div>
-      <p class="mb-1"><strong>Category:</strong> {{ g.category }}</p>
-      <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
-      <p class="mb-2"><strong>Summary:</strong> {{ g.description }}</p>
+{% for g in grievances %}
+<div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'warning' }}">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
+        {{ g.priority }} Priority
+      </span>
+      <span class="badge bg-secondary">{{ g.status }}</span>
+      <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+    </div>
+    <p class="mb-1"><strong>Category:</strong> {{ g.category }}</p>
+    <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
+    <p class="mb-2"><strong>Summary:</strong> {{ g.description }}</p>
 
-      <!-- Voting -->
-      <div class="mt-2 p-2 bg-light rounded">
-        <p class="mb-2 small fw-semibold">Are other students facing the same issue?</p>
-        <form method="POST" action="/vote/{{ g.id }}" class="d-flex gap-2">
-          <button name="vote" value="yes" class="btn btn-sm btn-outline-success">
-            👍 Yes ({{ g.yes_votes }})
-          </button>
-          <button name="vote" value="no" class="btn btn-sm btn-outline-secondary">
-            👎 No ({{ g.no_votes }})
-          </button>
-        </form>
+    {% if g.status == "Pending Approval" %}
+    <div class="d-flex gap-2">
+      <a href="/edit/{{ g.id }}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-pencil"></i> Edit
+      </a>
+      <!-- Trigger modal instead of confirm() -->
+      <button type="button" class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('{{ g.id }}')">
+        <i class="bi bi-trash"></i> Delete
+      </button>
+    </div>
+    {% else %}
+    <small class="text-muted"><i class="bi bi-lock"></i> Cannot edit — already {{ g.status }}</small>
+    {% endif %}
+
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">You haven't submitted any grievances yet.</div>
+{% endif %}
+
+<a href="/dashboard" class="btn btn-primary mt-2">
+  <i class="bi bi-plus-circle"></i> Submit New Grievance
+</a>
+
+<!-- Custom Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-body text-center p-5">
+        <div class="mb-3">
+          <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+        </div>
+        <h5 class="fw-bold mb-2">Delete Grievance?</h5>
+        <p class="text-muted mb-4">This action cannot be undone. Your grievance will be permanently removed.</p>
+        <div class="d-flex gap-3 justify-content-center">
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+          <form id="deleteForm" method="POST">
+            <button type="submit" class="btn btn-danger px-4">
+              <i class="bi bi-trash"></i> Yes, Delete
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-  {% endfor %}
-{% else %}
-  <div class="alert alert-info">You haven't submitted any grievances yet.</div>
-{% endif %}
-<a href="/dashboard" class="btn btn-primary mt-2"><i class="bi bi-plus-circle"></i> Submit New Grievance</a>
+</div>
+
+<script>
+  function showDeleteModal(grievanceId) {
+    document.getElementById("deleteForm").action = "/delete/" + grievanceId;
+    const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+    modal.show();
+  }
+</script>
+
 {% endblock %}

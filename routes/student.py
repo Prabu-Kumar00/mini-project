@@ -84,3 +84,46 @@ def vote(grievance_id):
         g.no_votes += 1
     db.session.commit()
     return redirect(url_for("student.status"))
+
+@student.route("/edit/<int:grievance_id>", methods=["GET", "POST"])
+@login_required
+def edit_grievance(grievance_id):
+    g = Grievance.query.get_or_404(grievance_id)
+
+    # Security: only owner can edit, only if pending
+    if g.student_id != current_user.id or g.status != "Pending Approval":
+        flash("You cannot edit this grievance.", "danger")
+        return redirect(url_for("student.status"))
+
+    if request.method == "POST":
+        new_text = request.form.get("grievance_text", "").strip()
+        if new_text:
+            result = analyze_text(new_text, current_user.department)
+            g.text = new_text
+            g.category = result.get("category")
+            g.priority = result.get("priority")
+            g.route_to = result.get("route_to")
+            g.description = result.get("description")
+            g.is_abusive = result.get("is_abusive", False)
+            db.session.commit()
+            flash("Grievance updated successfully!", "success")
+        return redirect(url_for("student.status"))
+
+    return render_template("student/edit.html", grievance=g)
+
+
+@student.route("/delete/<int:grievance_id>", methods=["POST"])
+@login_required
+def delete_grievance(grievance_id):
+    g = Grievance.query.get_or_404(grievance_id)
+
+    # Security: only owner can delete, only if pending
+    if g.student_id != current_user.id or g.status != "Pending Approval":
+        flash("You cannot delete this grievance.", "danger")
+        return redirect(url_for("student.status"))
+
+    db.session.delete(g)
+    db.session.commit()
+    flash("Grievance deleted.", "success")
+    return redirect(url_for("student.status"))
+

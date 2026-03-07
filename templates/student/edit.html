@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-1"><i class="bi bi-pencil"></i> Edit Grievance</h4>
+                <p class="text-muted small mb-4">Our AI will re-analyze your updated grievance automatically.</p>
+
+                <div class="alert alert-info small mb-3">
+                    <strong>Current:</strong> {{ grievance.category }} |
+                    {{ grievance.priority }} Priority |
+                    Routed to {{ grievance.route_to }}
+                </div>
+
+                <form method="POST" action="/edit/{{ grievance.id }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Update your grievance</label>
+                        <textarea name="grievance_text" class="form-control" rows="5"
+                            required>{{ grievance.text or '' }}</textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-arrow-clockwise"></i> Update & Re-analyze
+                        </button>
+                        <a href="/status" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
