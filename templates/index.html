@@ -21,7 +21,7 @@
         /* Navbar */
         .navbar {
             background: #1a1a2e;
-            padding: 1rem 2rem;
+            padding: 1rem 1.5rem;
         }
 
         .navbar-brand {
@@ -45,7 +45,7 @@
             color: white;
         }
 
-        /* Hero Section */
+        /* Hero */
         .hero {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 90vh;
@@ -54,6 +54,7 @@
             color: white;
             position: relative;
             overflow: hidden;
+            padding: 4rem 0;
         }
 
         .hero::before {
@@ -67,10 +68,37 @@
             border-radius: 50%;
         }
 
+        /* Mobile hero — stacked, centered */
+        @media (max-width: 991px) {
+            .hero {
+                min-height: auto;
+                padding: 2.5rem 0;
+                align-items: flex-start;
+            }
+
+            .hero .container {
+                padding-top: 0;
+            }
+
+            .hero-text-col {
+                text-align: center;
+            }
+
+            .hero-text-col .d-flex {
+                justify-content: center;
+            }
+        }
+
         .hero-title {
-            font-size: 3.2rem;
+            font-size: 2rem;
             font-weight: 800;
             line-height: 1.2;
+        }
+
+        @media (min-width: 992px) {
+            .hero-title {
+                font-size: 3.2rem;
+            }
         }
 
         .hero-title span {
@@ -78,9 +106,9 @@
         }
 
         .hero-subtitle {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: #a0aec0;
-            margin: 1.5rem 0 2rem;
+            margin: 1.2rem 0 1.8rem;
             line-height: 1.7;
         }
 
@@ -127,35 +155,58 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.5rem;
             backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 991px) {
+            .hero-card {
+                margin-top: 2rem;
+            }
         }
 
         .hero-stat {
             text-align: center;
-            padding: 1rem;
+            padding: 0.8rem;
         }
 
         .hero-stat .number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: #4f8ef7;
         }
 
         .hero-stat .label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #a0aec0;
             margin-top: 0.2rem;
         }
 
-        /* Features Section */
+        /* Flow diagram */
+        .flow-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .flow-inner {
+            min-width: 300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        /* Features */
         .features {
             background: #f8f9fa;
-            padding: 5rem 0;
+            padding: 4rem 0;
         }
 
         .section-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             text-align: center;
             margin-bottom: 0.5rem;
@@ -170,7 +221,7 @@
         .feature-card {
             background: white;
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             height: 100%;
             border: 1px solid #e9ecef;
             transition: all 0.3s;
@@ -183,20 +234,20 @@
         }
 
         .feature-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
         }
 
         /* How It Works */
         .how-it-works {
             background: white;
-            padding: 5rem 0;
+            padding: 4rem 0;
         }
 
         .step-number {
@@ -213,16 +264,16 @@
             margin: 0 auto 1rem;
         }
 
-        /* CTA Section */
+        /* CTA */
         .cta {
             background: linear-gradient(135deg, #1a1a2e, #0f3460);
-            padding: 5rem 0;
+            padding: 4rem 0;
             color: white;
             text-align: center;
         }
 
         .cta h2 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             margin-bottom: 1rem;
         }
@@ -230,6 +281,13 @@
         .cta p {
             color: #a0aec0;
             margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
         }
 
         /* Footer */
@@ -248,12 +306,10 @@
     <!-- Navbar -->
     <nav class="navbar d-flex justify-content-between align-items-center">
         <span class="navbar-brand"><i class="bi bi-shield-check"></i> GrievanceAI</span>
-        <div class="d-flex gap-3 align-items-center">
-            <!-- ✅ Sign In → role selector -->
+        <div class="d-flex gap-2 align-items-center">
             <a href="/login" class="nav-btn">Sign In</a>
-            <!-- ✅ Get Started → role selector with register intent -->
             <a href="/login?action=register" class="btn-primary-custom"
-                style="padding: 0.4rem 1.2rem; font-size:0.9rem;">
+                style="padding:0.4rem 1.2rem; font-size:0.9rem;">
                 Get Started
             </a>
         </div>
@@ -263,7 +319,9 @@
     <section class="hero">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+
+                <!-- Text Column -->
+                <div class="col-12 col-lg-6 hero-text-col">
                     <h1 class="hero-title">
                         A Smarter Way to<br>
                         <span>Resolve Grievances</span>
@@ -273,23 +331,23 @@
                         automatically classified and routed to the right authority — in seconds.
                     </p>
                     <div class="d-flex gap-3 flex-wrap">
-                        <!-- ✅ Get Started → role selector with register intent -->
                         <a href="/login?action=register" class="btn-primary-custom">Get Started →</a>
-                        <!-- ✅ Sign In → role selector -->
                         <a href="/login" class="btn-secondary-custom">Sign In</a>
                     </div>
                 </div>
-                <div class="col-lg-6 mt-5 mt-lg-0">
+
+                <!-- Card Column -->
+                <div class="col-12 col-lg-6 mt-4 mt-lg-0">
                     <div class="hero-card">
                         <p class="text-center mb-3" style="color:#a0aec0; font-size:0.85rem;">SYSTEM OVERVIEW</p>
                         <div class="row g-0">
                             <div class="col-4 hero-stat border-end"
-                                style="border-color: rgba(255,255,255,0.1) !important">
+                                style="border-color:rgba(255,255,255,0.1)!important">
                                 <div class="number">AI</div>
                                 <div class="label">Powered by Gemini</div>
                             </div>
                             <div class="col-4 hero-stat border-end"
-                                style="border-color: rgba(255,255,255,0.1) !important">
+                                style="border-color:rgba(255,255,255,0.1)!important">
                                 <div class="number">2</div>
                                 <div class="label">Priority Levels</div>
                             </div>
@@ -298,32 +356,33 @@
                                 <div class="label">Departments</div>
                             </div>
                         </div>
-                        <hr style="border-color: rgba(255,255,255,0.1)">
-                        <!-- Mini flow diagram -->
-                        <div class="d-flex justify-content-between align-items-center text-center"
-                            style="color:#a0aec0; font-size:0.8rem;">
-                            <div>
-                                <div style="font-size:1.5rem">📝</div>
-                                <div>Submit</div>
-                            </div>
-                            <div style="color:#4f8ef7">→</div>
-                            <div>
-                                <div style="font-size:1.5rem">🤖</div>
-                                <div>AI Analysis</div>
-                            </div>
-                            <div style="color:#4f8ef7">→</div>
-                            <div>
-                                <div style="font-size:1.5rem">✅</div>
-                                <div>Approval</div>
-                            </div>
-                            <div style="color:#4f8ef7">→</div>
-                            <div>
-                                <div style="font-size:1.5rem">📨</div>
-                                <div>Resolved</div>
+                        <hr style="border-color:rgba(255,255,255,0.1)">
+                        <div class="flow-scroll">
+                            <div class="flow-inner">
+                                <div>
+                                    <div style="font-size:1.3rem">📝</div>
+                                    <div>Submit</div>
+                                </div>
+                                <div style="color:#4f8ef7">→</div>
+                                <div>
+                                    <div style="font-size:1.3rem">🤖</div>
+                                    <div>AI Analysis</div>
+                                </div>
+                                <div style="color:#4f8ef7">→</div>
+                                <div>
+                                    <div style="font-size:1.3rem">✅</div>
+                                    <div>Approval</div>
+                                </div>
+                                <div style="color:#4f8ef7">→</div>
+                                <div>
+                                    <div style="font-size:1.3rem">📨</div>
+                                    <div>Resolved</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -334,7 +393,7 @@
             <h2 class="section-title">Everything You Need</h2>
             <p class="section-subtitle">Built to make grievance handling fast, fair, and transparent</p>
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#e8f0fe">
                             <i class="bi bi-robot" style="color:#4f8ef7"></i>
@@ -344,7 +403,7 @@
                             Infrastructure, Discipline, and more — instantly.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#fce8e8">
                             <i class="bi bi-lightning-charge" style="color:#e53e3e"></i>
@@ -354,7 +413,7 @@
                             Warden, or Admin — without manual intervention.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#e8fce8">
                             <i class="bi bi-image" style="color:#38a169"></i>
@@ -364,7 +423,7 @@
                             damage, or cleanliness issues automatically.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#fef3e8">
                             <i class="bi bi-shield-exclamation" style="color:#dd6b20"></i>
@@ -374,7 +433,7 @@
                             priority grievances appear in the dashboard queue.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#f0e8fe">
                             <i class="bi bi-people" style="color:#805ad5"></i>
@@ -384,7 +443,7 @@
                             reach authorities, ensuring quality control.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon" style="background:#e8fefe">
                             <i class="bi bi-graph-up" style="color:#2b6cb0"></i>
@@ -404,23 +463,23 @@
             <h2 class="section-title">How It Works</h2>
             <p class="section-subtitle">Four simple steps from complaint to resolution</p>
             <div class="row g-4 text-center">
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="step-number">1</div>
                     <h6 class="fw-bold">Submit</h6>
                     <p class="text-muted small">Log in with your college email and submit a text or image grievance</p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="step-number">2</div>
                     <h6 class="fw-bold">AI Analysis</h6>
                     <p class="text-muted small">Gemini AI classifies, prioritizes, and determines the correct authority
                     </p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="step-number">3</div>
                     <h6 class="fw-bold">Approval</h6>
                     <p class="text-muted small">Academic coordinator reviews and approves before forwarding</p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="step-number">4</div>
                     <h6 class="fw-bold">Resolution</h6>
                     <p class="text-muted small">Authority reviews and resolves the grievance, student is notified</p>
@@ -434,10 +493,10 @@
         <div class="container">
             <h2>Ready to Submit Your Grievance?</h2>
             <p>Join your college community — get issues resolved faster with AI</p>
-            <!-- ✅ Get Started → role selector with register intent -->
-            <a href="/login?action=register" class="btn-primary-custom me-3">Create Account →</a>
-            <!-- ✅ Sign In → role selector -->
-            <a href="/login" class="btn-secondary-custom">Sign In</a>
+            <div class="cta-buttons">
+                <a href="/login?action=register" class="btn-primary-custom">Create Account →</a>
+                <a href="/login" class="btn-secondary-custom">Sign In</a>
+            </div>
         </div>
     </section>
 

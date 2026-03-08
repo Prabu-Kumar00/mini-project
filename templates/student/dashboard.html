@@ -3,13 +3,13 @@
 
 <!-- Top Stats Bar -->
 <div class="row g-3 mb-4">
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card border-0 rounded-4 shadow-sm text-center p-3">
       <div class="fw-bold fs-3 text-primary">{{ student.grievances | length }}</div>
       <small class="text-muted">Total Submitted</small>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card border-0 rounded-4 shadow-sm text-center p-3">
       <div class="fw-bold fs-3 text-warning">
         {{ student.grievances | selectattr('status', 'equalto', 'Pending Approval') | list | length }}
@@ -17,7 +17,7 @@
       <small class="text-muted">Pending Approval</small>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card border-0 rounded-4 shadow-sm text-center p-3">
       <div class="fw-bold fs-3 text-info">
         {{ student.grievances | selectattr('status', 'equalto', 'In Progress') | list | length }}
@@ -25,7 +25,7 @@
       <small class="text-muted">In Progress</small>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card border-0 rounded-4 shadow-sm text-center p-3">
       <div class="fw-bold fs-3 text-success">
         {{ student.grievances | selectattr('status', 'equalto', 'Resolved') | list | length }}
@@ -39,7 +39,7 @@
 <div class="row g-4">
 
   <!-- LEFT: Submit Form + Latest Grievance -->
-  <div class="col-lg-8 d-flex flex-column gap-4">
+  <div class="col-12 col-lg-8 d-flex flex-column gap-4">
 
     <!-- Submit Form -->
     <div class="card border-0 rounded-4 shadow-sm flex-grow-1">
@@ -100,7 +100,7 @@
       </div>
     </div>
 
-    <!-- Latest Grievance — fills bottom of left column -->
+    <!-- Latest Grievance -->
     {% if student.grievances %}
     {% set latest = student.grievances | sort(attribute='submitted_at', reverse=True) | first %}
     <div class="card border-0 rounded-4 shadow-sm">
@@ -122,7 +122,7 @@
   </div>
 
   <!-- RIGHT: Tips + Categories -->
-  <div class="col-lg-4 d-flex flex-column gap-3">
+  <div class="col-12 col-lg-4 d-flex flex-column gap-3">
 
     <!-- Tips -->
     <div class="card border-0 rounded-4 shadow-sm">
@@ -197,6 +197,14 @@
       };
       reader.readAsDataURL(input.files[0]);
     }
+  }
+
+  function toggleInput(type) {
+    document.getElementById('input_type').value = type;
+    document.getElementById('text-section').style.display = type === 'text' ? 'block' : 'none';
+    document.getElementById('image-section').style.display = type === 'image' ? 'block' : 'none';
+    document.getElementById('btn-text').className = 'btn ' + (type === 'text' ? 'btn-primary active' : 'btn-outline-primary');
+    document.getElementById('btn-image').className = 'btn ' + (type === 'image' ? 'btn-primary active' : 'btn-outline-primary');
   }
 </script>
 {% endblock %}

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4 class="fw-bold mb-4">
+  <i class="bi bi-check2-circle"></i> Coordinator Panel — Pending Approvals
+</h4>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endwith %}
+
+<!-- Filter Tab Buttons -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="filter-tab active-tab" onclick="filterGrievances('all')" id="tab-all">
+      <div class="fw-bold fs-4 text-primary">{{ grievances | length }}</div>
+      <small class="text-muted">All</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('Pending Approval')" id="tab-pending">
+      <div class="fw-bold fs-4 text-warning">
+        {{ grievances | selectattr('status','equalto','Pending Approval') | list | length }}
+      </div>
+      <small class="text-muted">Pending</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('Approved')" id="tab-approved">
+      <div class="fw-bold fs-4 text-success">
+        {{ grievances | selectattr('status','equalto','Approved') | list | length }}
+      </div>
+      <small class="text-muted">Approved</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('Declined')" id="tab-declined">
+      <div class="fw-bold fs-4 text-danger">
+        {{ (grievances | selectattr('status','equalto','Declined') | list | length) +
+        (grievances | selectattr('status','equalto','Rejected') | list | length) }}
+      </div>
+      <small class="text-muted">Declined</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-tab {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .filter-tab:hover {
+    border-color: #4f8ef7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.15);
+  }
+
+  .filter-tab.active-tab {
+    border-color: #4f8ef7;
+    background: #f0f5ff;
+    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.2);
+  }
+
+  .grievance-card {
+    transition: all 0.2s;
+  }
+
+  .grievance-card.hidden {
+    display: none !important;
+  }
+</style>
+
+{% if grievances %}
+{% for g in grievances %}
+<div class="card mb-4 shadow-sm border-0 grievance-card" data-status="{{ g.status }}">
+  <div class="card-body">
+
+    <!-- Top Row: Priority + Date -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+      <div class="d-flex gap-2 flex-wrap">
+        <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
+          {{ g.priority }} Priority
+        </span>
+        <span class="badge
+          {% if g.status == 'Approved' %}bg-success
+          {% elif g.status in ['Declined', 'Rejected'] %}bg-danger
+          {% else %}bg-secondary{% endif %}">
+          {{ g.status }}
+        </span>
+      </div>
+      <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+    </div>
+
+    <!-- Grievance Details -->
+    <p class="mb-1"><strong>Student:</strong> {{ g.student.name }} ({{ g.student.roll_no }}) — {{ g.student.department
+      }}</p>
+    <p class="mb-1"><strong>Category:</strong> {{ g.category }} → <strong>Route To:</strong> {{ g.route_to }}</p>
+    <p class="mb-3"><strong>Description:</strong> {{ g.description }}</p>
+
+    {% if g.image_path %}
+    <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3 w-100"
+      style="max-height:200px; object-fit:cover;">
+    {% endif %}
+
+    <!-- Declined/Rejected reason box -->
+    {% if g.status in ['Declined', 'Rejected'] and g.action_note %}
+    <div class="alert alert-danger py-2 mb-3" style="font-size:0.85rem;">
+      <i class="bi bi-x-circle"></i> Declined Reason: <strong>{{ g.action_note }}</strong>
+    </div>
+    {% endif %}
+
+    {% if g.status == 'Approved' %}
+    <div class="alert alert-success py-2 mb-3" style="font-size:0.85rem;">
+      <i class="bi bi-check-circle"></i> Forwarded to: <strong>{{ g.forwarded_to }}</strong>
+    </div>
+
+    {% elif g.status == 'Pending Approval' %}
+    <hr>
+    <div class="row g-3 align-items-stretch">
+
+      <!-- ✅ APPROVE FORM -->
+      <div class="col-12 col-md-6 d-flex flex-column">
+        <form method="POST" action="/coordinator/action/{{ g.id }}" class="d-flex flex-column h-100">
+          <input type="hidden" name="decision" value="forward">
+          <input type="hidden" name="forward_to" value="{{ g.route_to }}">
+          <label class="form-label fw-semibold text-success mb-2">
+            <i class="bi bi-arrow-right-circle"></i> Forward To
+          </label>
+          <div class="form-control form-control-sm mb-2 flex-grow-1 d-flex align-items-center"
+            style="background:#f0fff4; border-color:#a3d9a5; color:#2e7d32; font-size:0.85rem;">
+            <i class="bi bi-robot me-2"></i> AI Routed to: <strong class="ms-1">{{ g.route_to }}</strong>
+          </div>
+          <button type="submit" class="btn btn-success btn-sm w-100">
+            <i class="bi bi-check-circle"></i> Approve & Forward
+          </button>
+        </form>
+      </div>
+
+      <!-- ❌ DECLINE FORM -->
+      <div class="col-12 col-md-6 d-flex flex-column">
+        <form method="POST" action="/coordinator/action/{{ g.id }}" class="d-flex flex-column h-100">
+          <input type="hidden" name="decision" value="decline">
+          <label class="form-label fw-semibold text-danger mb-2">
+            <i class="bi bi-x-circle"></i> Decline Reason
+          </label>
+          <input type="text" name="reason" class="form-control form-control-sm mb-2 flex-grow-1"
+            placeholder="Enter reason for declining..." required>
+          <button type="submit" class="btn btn-danger btn-sm w-100">
+            <i class="bi bi-x-lg"></i> Decline Grievance
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endfor %}
+
+{% else %}
+<div class="alert alert-success">
+  <i class="bi bi-check-all"></i> No grievances at the moment!
+</div>
+{% endif %}
+
+<!-- No filter results -->
+<div class="alert alert-info d-none" id="no-filter-results">
+  <i class="bi bi-inbox"></i> No grievances found in this category.
+</div>
+
+<script>
+  function filterGrievances(status) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active-tab'));
+    const tabMap = {
+      'all': 'tab-all',
+      'Pending Approval': 'tab-pending',
+      'Approved': 'tab-approved',
+      'Declined': 'tab-declined'
+    };
+    const activeTab = document.getElementById(tabMap[status]);
+    if (activeTab) activeTab.classList.add('active-tab');
+
+    const cards = document.querySelectorAll('.grievance-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      // ✅ Treat "Rejected" same as "Declined"
+      const cardStatus = card.dataset.status === 'Rejected' ? 'Declined' : card.dataset.status;
+      if (status === 'all' || cardStatus === status) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    const noResults = document.getElementById('no-filter-results');
+    noResults.classList.toggle('d-none', visibleCount > 0);
+  }
+</script>
+{% endblock %}

@@ -47,7 +47,7 @@ def coordinator_login():
                 flash("Your account has been deactivated.", "danger")
                 return redirect(url_for("auth.login") + "?role=coordinator")
             login_user(staff)
-            return redirect(url_for("coordinator.panel"))
+            return redirect(url_for("coordinator.dashboard"))
         flash("Invalid coordinator credentials.", "danger")
         return redirect(url_for("auth.login") + "?role=coordinator")
     return redirect(url_for("auth.login") + "?role=coordinator")

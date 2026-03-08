@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
+from flask_mail import Mail
 from models import db, Student, Staff
 from routes.auth import auth
 from routes.student import student
@@ -7,18 +8,30 @@ from routes.coordinator import coordinator
 from routes.admin import admin
 import config, os
 
+# ✅ STEP 1 — Create app FIRST
 app = Flask(__name__)
 app.config.from_object(config)
 os.makedirs("static/uploads", exist_ok=True)
 
+# ✅ STEP 2 — Mail config AFTER app created
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'grievanceaisrec@gmail.com'
+app.config['MAIL_PASSWORD'] = 'yjzzujisfyprmdbf'
+app.config['MAIL_DEFAULT_SENDER'] = 'grievanceaisrec@gmail.com'
+
+# ✅ STEP 3 — Initialize extensions
+mail = Mail(app)
 db.init_app(app)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    # ✅ Fix: use prefix to load correct model
     if user_id.startswith("s_"):
         return db.session.get(Student, int(user_id[2:]))
     elif user_id.startswith("f_"):

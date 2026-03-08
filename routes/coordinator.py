@@ -22,11 +22,11 @@ def coordinator_required(f):
 # ─── COORDINATOR PANEL ────────────────────────────────────
 @coordinator.route("/coordinator")
 @login_required
-@coordinator_required
-def panel():
-    # Show all pending grievances
-    grievances = Grievance.query.filter_by(status="Pending Approval").all()
-    return render_template("coordinator/panel.html", grievances=grievances)
+def dashboard():
+    grievances = Grievance.query.filter(
+        Grievance.status.in_(["Pending Approval", "Approved", "Rejected"])
+    ).order_by(Grievance.submitted_at.desc()).all()
+    return render_template("coordinator/dashboard.html", grievances=grievances)
 
 
 # ─── COORDINATOR ACTION ───────────────────────────────────
@@ -63,7 +63,7 @@ def action(grievance_id):
 
     elif decision == "decline":
         # ✅ Update grievance
-        g.status    = "Rejected"
+        g.status    = "Declined"
         g.action_by = current_user.name
         g.action_note = reason
         g.action_at = datetime.utcnow()
@@ -80,4 +80,4 @@ def action(grievance_id):
         )
         flash("Grievance declined. Student notified via email.", "warning")
 
-    return redirect(url_for("coordinator.panel"))
+    return redirect(url_for("coordinator.dashboard"))

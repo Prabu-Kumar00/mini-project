@@ -1,58 +1,258 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h4 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h4>
+
+<!-- Filter Tab Buttons -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="filter-tab active-tab" onclick="filterGrievances('all')" id="tab-all">
+      <div class="fw-bold fs-4 text-primary">{{ grievances | length }}</div>
+      <small class="text-muted">All</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('Approved')" id="tab-Approved">
+      <div class="fw-bold fs-4 text-success">
+        {{ grievances | selectattr('status','equalto','Approved') | list | length }}
+      </div>
+      <small class="text-muted">Approved</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('In Progress')" id="tab-In Progress">
+      <div class="fw-bold fs-4 text-info">
+        {{ grievances | selectattr('status','equalto','In Progress') | list | length }}
+      </div>
+      <small class="text-muted">In Progress</small>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="filter-tab" onclick="filterGrievances('Resolved')" id="tab-Resolved">
+      <div class="fw-bold fs-4 text-warning">
+        {{ grievances | selectattr('status','equalto','Resolved') | list | length }}
+      </div>
+      <small class="text-muted">Resolved</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-tab {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .filter-tab:hover {
+    border-color: #4f8ef7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.15);
+  }
+
+  .filter-tab.active-tab {
+    border-color: #4f8ef7;
+    background: #f0f5ff;
+    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.2);
+  }
+
+  .grievance-card {
+    transition: all 0.2s;
+  }
+
+  .grievance-card.hidden {
+    display: none !important;
+  }
+
+  .badge-new {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .badge-viewed {
+    background: #f5f5f5;
+    color: #757575;
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+</style>
+
+<!-- Grievance Cards -->
 {% if grievances %}
-  {% for g in grievances %}
-  <div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'secondary' }}">
-    <div class="card-body">
-      <div class="d-flex justify-content-between mb-2">
+{% for g in grievances %}
+<div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'secondary' }}
+     grievance-card" data-status="{{ g.status }}" id="grievance-{{ g.id }}">
+  <div class="card-body">
+
+    <!-- Top Row -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+      <div class="d-flex gap-2 align-items-center flex-wrap">
         <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
           {{ g.priority }} Priority
         </span>
         <span class="badge bg-info text-dark">{{ g.category }}</span>
-        <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+        <span class="badge-new" id="seen-{{ g.id }}" data-id="{{ g.id }}" style="cursor:pointer"
+          title="Click to mark as viewed">
+          🆕 New
+        </span>
       </div>
+      <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+    </div>
 
-      <!-- Student Details -->
-      <div class="bg-light p-2 rounded mb-3">
-        <strong>Student Details</strong>
-        <div class="row mt-1 small">
-          <div class="col-md-3"><b>Name:</b> {{ g.student.name }}</div>
-          <div class="col-md-3"><b>Roll No:</b> {{ g.student.roll_no }}</div>
-          <div class="col-md-3"><b>Dept:</b> {{ g.student.department }}</div>
-          <div class="col-md-3"><b>Class:</b> {{ g.student.class_name }} - {{ g.student.section }}</div>
-        </div>
-      </div>
+    <!-- Status Badge -->
+    <div class="mb-2">
+      <span class="badge
+        {% if g.status == 'Approved' %}bg-success
+        {% elif g.status == 'In Progress' %}bg-info text-dark
+        {% elif g.status == 'Resolved' %}bg-warning text-dark
+        {% else %}bg-secondary{% endif %}">
+        {{ g.status }}
+      </span>
+    </div>
 
-      <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
-      <p class="mb-2"><strong>Description:</strong> {{ g.description }}</p>
-      {% if g.image_path %}
-        <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3" style="max-height:200px">
-      {% endif %}
-      <p class="small text-muted mb-2">
-        <i class="bi bi-hand-thumbs-up"></i> {{ g.yes_votes }} others affected &nbsp;|&nbsp;
-        <i class="bi bi-hand-thumbs-down"></i> {{ g.no_votes }} not affected
-      </p>
-
-      <!-- Reply + Status -->
-      <div class="d-flex gap-2 align-items-center flex-wrap">
-        <button class="btn btn-outline-primary btn-sm"
-          onclick="navigator.clipboard.writeText('{{ g.student.email }}'); alert('Email copied!')">
-          <i class="bi bi-reply"></i> Reply via Mail (Copy Email)
-        </button>
-        <form method="POST" action="/admin/update/{{ g.id }}" class="d-flex gap-2">
-          <select name="status" class="form-select form-select-sm" style="width:auto">
-            <option>Approved</option>
-            <option>In Progress</option>
-            <option>Resolved</option>
-          </select>
-          <button type="submit" class="btn btn-sm btn-dark">Update</button>
-        </form>
+    <!-- Student Details -->
+    <div class="bg-light p-2 rounded mb-3">
+      <strong>Student Details</strong>
+      <div class="row mt-1 small">
+        <div class="col-6 col-md-3"><b>Name:</b> {{ g.student.name }}</div>
+        <div class="col-6 col-md-3"><b>Roll No:</b> {{ g.student.roll_no }}</div>
+        <div class="col-6 col-md-3"><b>Dept:</b> {{ g.student.department }}</div>
+        <div class="col-6 col-md-3"><b>Class:</b> {{ g.student.class_name }} - {{ g.student.section }}</div>
       </div>
     </div>
+
+    <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
+    <p class="mb-2"><strong>Description:</strong> {{ g.description }}</p>
+
+    {% if g.image_path %}
+    <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3 w-100"
+      style="max-height:200px; object-fit:cover;">
+    {% endif %}
+
+    <p class="small text-muted mb-2">
+      <i class="bi bi-hand-thumbs-up"></i> {{ g.yes_votes }} others affected &nbsp;|&nbsp;
+      <i class="bi bi-hand-thumbs-down"></i> {{ g.no_votes }} not affected
+    </p>
+
+    <!-- Reply + Status Update -->
+    <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center flex-wrap">
+
+      <!-- ✅ Reply Modal Trigger -->
+      <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal{{ g.id }}">
+        <i class="bi bi-envelope"></i> Reply via Mail
+      </button>
+
+      <!-- Status Update Form -->
+      <form method="POST" action="/admin/update/{{ g.id }}" class="d-flex gap-2 flex-grow-1">
+        <select name="status" class="form-select form-select-sm flex-grow-1">
+          <option {% if g.status=='Approved' %}selected{% endif %}>Approved</option>
+          <option {% if g.status=='In Progress' %}selected{% endif %}>In Progress</option>
+          <option {% if g.status=='Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+        <button type="submit" class="btn btn-sm btn-dark">Update</button>
+      </form>
+    </div>
+
   </div>
-  {% endfor %}
+</div>
+
+<!-- ✅ Reply Modal (outside card, inside loop) -->
+<div class="modal fade" id="replyModal{{ g.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title fw-bold">
+          <i class="bi bi-envelope"></i> Reply to {{ g.student.name }}
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="/admin/reply/{{ g.id }}">
+        <div class="modal-body">
+          <p class="text-muted small mb-1">
+            <b>To:</b> {{ g.student.email }}
+          </p>
+          <p class="text-muted small mb-3">
+            <b>Subject:</b> Update on Your Grievance — {{ g.category }}
+          </p>
+          <label class="form-label fw-semibold">Your Message</label>
+          <textarea name="reply_message" class="form-control" rows="4"
+            placeholder="Type your message to the student..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-send"></i> Send Email
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+
 {% else %}
-  <div class="alert alert-info">No approved grievances to display.</div>
+<div class="alert alert-info">
+  <i class="bi bi-inbox"></i> No grievances to display yet.
+</div>
 {% endif %}
+
+<!-- No results message when filter returns empty -->
+<div class="alert alert-info d-none" id="no-filter-results">
+  <i class="bi bi-inbox"></i> No grievances found in this category.
+</div>
+
+<script>
+  document.querySelectorAll('[id^="seen-"]').forEach(el => {
+    const id = el.dataset.id;
+    if (localStorage.getItem('viewed-' + id)) {
+      el.className = 'badge-viewed';
+      el.textContent = '👁 Viewed';
+    }
+    el.addEventListener('click', () => markViewed(id));
+  });
+
+  function markViewed(id) {
+    localStorage.setItem('viewed-' + id, '1');
+    const el = document.getElementById('seen-' + id);
+    el.className = 'badge-viewed';
+    el.textContent = '👁 Viewed';
+  }
+
+  function filterGrievances(status) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active-tab'));
+    const tabKey = status === 'all' ? 'tab-all' : 'tab-' + status;
+    const activeTab = document.getElementById(tabKey);
+    if (activeTab) activeTab.classList.add('active-tab');
+
+    const cards = document.querySelectorAll('.grievance-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      if (status === 'all' || card.dataset.status === status) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    const noResults = document.getElementById('no-filter-results');
+    if (visibleCount === 0) {
+      noResults.classList.remove('d-none');
+    } else {
+      noResults.classList.add('d-none');
+    }
+  }
+</script>
 {% endblock %}
