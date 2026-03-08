@@ -1,34 +1,97 @@
 {% extends "base.html" %}
 {% block content %}
-<h4 class="fw-bold mb-4"><i class="bi bi-check2-circle"></i> Coordinator Panel — Pending Approvals</h4>
+
+<h4 class="fw-bold mb-4">
+  <i class="bi bi-check2-circle"></i> Coordinator Panel — Pending Approvals
+</h4>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endwith %}
+
 {% if grievances %}
   {% for g in grievances %}
-  <div class="card mb-3 shadow-sm">
+  <div class="card mb-4 shadow-sm border-0">
     <div class="card-body">
+
+      <!-- Top Row: Priority + Date -->
       <div class="d-flex justify-content-between mb-2">
         <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
           {{ g.priority }} Priority
         </span>
         <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
       </div>
+
+      <!-- Grievance Details -->
       <p class="mb-1"><strong>Student:</strong> {{ g.student.name }} ({{ g.student.roll_no }}) — {{ g.student.department }}</p>
       <p class="mb-1"><strong>Category:</strong> {{ g.category }} → <strong>Route To:</strong> {{ g.route_to }}</p>
       <p class="mb-3"><strong>Description:</strong> {{ g.description }}</p>
+
       {% if g.image_path %}
-        <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3" style="max-height:200px">
+        <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}"
+          class="img-thumbnail mb-3" style="max-height:200px">
       {% endif %}
-      <form method="POST" action="/coordinator/action/{{ g.id }}" class="d-flex gap-2">
-        <button name="decision" value="accept" class="btn btn-success btn-sm">
-          <i class="bi bi-check-lg"></i> Accept
-        </button>
-        <button name="decision" value="reject" class="btn btn-danger btn-sm">
-          <i class="bi bi-x-lg"></i> Reject
-        </button>
-      </form>
+
+      <hr>
+
+      <!-- Action Forms Row -->
+      <div class="row g-3">
+
+        <!-- ✅ FORWARD FORM -->
+        <div class="col-md-6">
+          <form method="POST" action="/coordinator/action/{{ g.id }}">
+            <input type="hidden" name="decision" value="forward">
+            <label class="form-label fw-semibold text-success">
+              <i class="bi bi-arrow-right-circle"></i> Forward To
+            </label>
+            <select name="forward_to" class="form-select form-select-sm mb-2" required>
+              <option value="">Select Department / Authority</option>
+              <option value="HOD - Computer Science">HOD - Computer Science</option>
+              <option value="HOD - Mechanical">HOD - Mechanical</option>
+              <option value="HOD - Electronics">HOD - Electronics</option>
+              <option value="HOD - Civil">HOD - Civil</option>
+              <option value="Admin Office">Admin Office</option>
+              <option value="Disciplinary Committee">Disciplinary Committee</option>
+              <option value="Infrastructure Department">Infrastructure Department</option>
+              <option value="Hostel Warden">Hostel Warden</option>
+            </select>
+            <button type="submit" class="btn btn-success btn-sm w-100">
+              <i class="bi bi-send"></i> Forward Grievance
+            </button>
+          </form>
+        </div>
+
+        <!-- ❌ DECLINE FORM -->
+        <div class="col-md-6">
+          <form method="POST" action="/coordinator/action/{{ g.id }}">
+            <input type="hidden" name="decision" value="decline">
+            <label class="form-label fw-semibold text-danger">
+              <i class="bi bi-x-circle"></i> Decline Reason
+            </label>
+            <input type="text" name="reason" class="form-control form-control-sm mb-2"
+              placeholder="Enter reason for declining..." required>
+            <button type="submit" class="btn btn-danger btn-sm w-100">
+              <i class="bi bi-x-lg"></i> Decline Grievance
+            </button>
+          </form>
+        </div>
+
+      </div>
+      <!-- End Action Forms -->
+
     </div>
   </div>
   {% endfor %}
+
 {% else %}
-  <div class="alert alert-success"><i class="bi bi-check-all"></i> No pending grievances!</div>
+  <div class="alert alert-success">
+    <i class="bi bi-check-all"></i> No pending grievances at the moment!
+  </div>
 {% endif %}
+
 {% endblock %}

@@ -4,20 +4,35 @@ from werkzeug.utils import secure_filename
 from models import db, Grievance
 from gemini_helper import analyze_text, analyze_image
 from email_helper import send_high_priority_alert
+from functools import wraps
 import os
+
 
 student = Blueprint("student", __name__)
 UPLOAD_FOLDER = "static/uploads"
 
+
+# ✅ FIX: Role guard — blocks Staff from accessing student routes
+def student_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not hasattr(current_user, 'roll_no'):  # Staff won't have roll_no
+            flash("Access denied. Students only.", "danger")
+            return redirect(url_for("auth.login"))
+        return f(*args, **kwargs)
+    return decorated
+
+
 @student.route("/dashboard", methods=["GET", "POST"])
 @login_required
+@student_required  # ✅ Added
 def dashboard():
     if request.method == "POST":
         if current_user.is_blocked:
             flash("Your account is blocked.", "danger")
             return redirect(url_for("student.dashboard"))
 
-        input_type = request.form.get("input_type")  # "text" or "image"
+        input_type = request.form.get("input_type")
         result = None
 
         if input_type == "text":
@@ -68,14 +83,18 @@ def dashboard():
 
     return render_template("student/dashboard.html", student=current_user)
 
+
 @student.route("/status")
 @login_required
+@student_required  # ✅ Added
 def status():
     grievances = Grievance.query.filter_by(student_id=current_user.id).order_by(Grievance.submitted_at.desc()).all()
     return render_template("student/status.html", grievances=grievances)
 
+
 @student.route("/vote/<int:grievance_id>", methods=["POST"])
 @login_required
+@student_required  # ✅ Added
 def vote(grievance_id):
     g = Grievance.query.get_or_404(grievance_id)
     if request.form.get("vote") == "yes":
@@ -85,12 +104,13 @@ def vote(grievance_id):
     db.session.commit()
     return redirect(url_for("student.status"))
 
+
 @student.route("/edit/<int:grievance_id>", methods=["GET", "POST"])
 @login_required
+@student_required  # ✅ Added
 def edit_grievance(grievance_id):
     g = Grievance.query.get_or_404(grievance_id)
 
-    # Security: only owner can edit, only if pending
     if g.student_id != current_user.id or g.status != "Pending Approval":
         flash("You cannot edit this grievance.", "danger")
         return redirect(url_for("student.status"))
@@ -114,10 +134,10 @@ def edit_grievance(grievance_id):
 
 @student.route("/delete/<int:grievance_id>", methods=["POST"])
 @login_required
+@student_required  # ✅ Added
 def delete_grievance(grievance_id):
     g = Grievance.query.get_or_404(grievance_id)
 
-    # Security: only owner can delete, only if pending
     if g.student_id != current_user.id or g.status != "Pending Approval":
         flash("You cannot delete this grievance.", "danger")
         return redirect(url_for("student.status"))
@@ -126,4 +146,3 @@ def delete_grievance(grievance_id):
     db.session.commit()
     flash("Grievance deleted.", "success")
     return redirect(url_for("student.status"))
-

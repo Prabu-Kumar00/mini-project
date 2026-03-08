@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
-from models import db, Student
+from models import db, Student, Staff
 from routes.auth import auth
 from routes.student import student
 from routes.coordinator import coordinator
@@ -18,7 +18,12 @@ login_manager.login_view = "auth.login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(Student, int(user_id))  # ✅ Fixed
+    # ✅ Fix: use prefix to load correct model
+    if user_id.startswith("s_"):
+        return db.session.get(Student, int(user_id[2:]))
+    elif user_id.startswith("f_"):
+        return db.session.get(Staff, int(user_id[2:]))
+    return None
 
 @app.route("/test-gemini")
 def test_gemini():
