@@ -8,7 +8,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
-
 </head>
 
 <body>
@@ -17,13 +16,16 @@
     <span class="navbar-brand fw-bold"><i class="bi bi-shield-check"></i> Grievance System</span>
     {% if current_user.is_authenticated %}
     <div class="d-flex align-items-center gap-3">
+      <a href="{{ url_for('community.index') }}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-people-fill"></i> Community
+      </a>
       <span class="text-white small">{{ current_user.name }}</span>
       <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
     {% endif %}
   </nav>
 
-  <div class="container-fluid px-4 mt-4"> {# ← change container to container-fluid px-4 #}
+  <div class="container-fluid px-4 mt-4">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
     <div class="alert alert-{{ category }} alert-dismissible fade show">
@@ -34,7 +36,6 @@
     {% endwith %}
     {% block content %}{% endblock %}
   </div>
-
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold"><i class="bi bi-people-fill text-primary"></i> Community Forum</h4>
+  <a href="{{ url_for('community.new_post') }}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-circle"></i> New Post
+  </a>
+</div>
+
+<!-- Search & Filter -->
+<form method="GET" class="row g-2 mb-4">
+  <div class="col-md-6">
+    <input type="text" name="search" class="form-control" placeholder="Search posts..."
+           value="{{ search }}">
+  </div>
+  <div class="col-md-4">
+    <select name="category" class="form-select">
+      <option value="all" {% if category == 'all' %}selected{% endif %}>All Categories</option>
+      <option value="Academic" {% if category == 'Academic' %}selected{% endif %}>Academic</option>
+      <option value="Hostel" {% if category == 'Hostel' %}selected{% endif %}>Hostel</option>
+      <option value="Transport" {% if category == 'Transport' %}selected{% endif %}>Transport</option>
+      <option value="Facilities" {% if category == 'Facilities' %}selected{% endif %}>Facilities</option>
+      <option value="General" {% if category == 'General' %}selected{% endif %}>General</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-outline-primary w-100" type="submit">
+      <i class="bi bi-search"></i> Search
+    </button>
+  </div>
+</form>
+
+<!-- Posts List -->
+{% if posts %}
+  {% for post in posts %}
+  <div class="card mb-3 shadow-sm border-0">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <a href="{{ url_for('community.view_post', post_id=post.id) }}"
+             class="text-decoration-none text-dark">
+            <h6 class="fw-bold mb-1">{{ post.title }}</h6>
+          </a>
+          <p class="text-muted small mb-1">
+            <i class="bi bi-person-circle"></i>
+            {{ "Anonymous" if post.is_anonymous else post.student.name }}
+            &nbsp;·&nbsp;
+            <i class="bi bi-clock"></i> {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+          </p>
+          <span class="badge bg-secondary">{{ post.category }}</span>
+          {% if post.is_resolved %}
+            <span class="badge bg-success ms-1"><i class="bi bi-check-circle"></i> Resolved</span>
+          {% endif %}
+        </div>
+        <div class="text-end text-muted small">
+          <div><i class="bi bi-arrow-up-circle"></i> {{ post.upvotes }} upvotes</div>
+          <div><i class="bi bi-chat-dots"></i> {{ post.replies|length }} replies</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="text-center text-muted py-5">
+    <i class="bi bi-inbox fs-1"></i>
+    <p class="mt-2">No posts found. Be the first to post!</p>
+  </div>
+{% endif %}
+
+{% endblock %}

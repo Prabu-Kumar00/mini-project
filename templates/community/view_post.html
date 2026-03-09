@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Back Button -->
+<a href="{{ url_for('community.index') }}" class="btn btn-outline-secondary btn-sm mb-3">
+  <i class="bi bi-arrow-left"></i> Back to Community
+</a>
+
+<!-- Post Card -->
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <h5 class="fw-bold">{{ post.title }}</h5>
+        <p class="text-muted small mb-2">
+          <i class="bi bi-person-circle"></i>
+          {{ "Anonymous" if post.is_anonymous else post.student.name }}
+          &nbsp;·&nbsp;
+          <i class="bi bi-clock"></i> {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}
+          &nbsp;·&nbsp;
+          <span class="badge bg-secondary">{{ post.category }}</span>
+          {% if post.is_resolved %}
+            <span class="badge bg-success ms-1"><i class="bi bi-check-circle"></i> Resolved</span>
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex flex-column gap-1 align-items-end">
+        <!-- Upvote -->
+        <form method="POST" action="{{ url_for('community.upvote_post', post_id=post.id) }}">
+          <button class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-up-circle"></i> {{ post.upvotes }} Upvote
+          </button>
+        </form>
+
+        {% if post.student_id == current_user.id %}
+          <!-- Resolve -->
+          {% if not post.is_resolved %}
+          <form method="POST" action="{{ url_for('community.resolve_post', post_id=post.id) }}">
+            <button class="btn btn-outline-success btn-sm">
+              <i class="bi bi-check-circle"></i> Mark Resolved
+            </button>
+          </form>
+          {% endif %}
+          <!-- Delete -->
+          <form method="POST" action="{{ url_for('community.delete_post', post_id=post.id) }}"
+                onsubmit="return confirm('Delete this post?')">
+            <button class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <hr>
+    <p class="mb-0">{{ post.content }}</p>
+  </div>
+</div>
+
+<!-- Replies -->
+<h6 class="fw-bold mb-3"><i class="bi bi-chat-dots"></i> Replies ({{ post.replies|length }})</h6>
+
+{% if post.replies %}
+  {% for reply in post.replies %}
+  <div class="card mb-2 border-0 bg-light">
+    <div class="card-body py-2 px-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="mb-1">{{ reply.content }}</p>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-person-circle"></i>
+            {{ "Anonymous" if reply.is_anonymous else reply.student.name }}
+            &nbsp;·&nbsp;
+            {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
+          </p>
+        </div>
+        <form method="POST" action="{{ url_for('community.upvote_reply', reply_id=reply.id) }}">
+          <button class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-up-circle"></i> {{ reply.upvotes }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="text-muted small">No replies yet. Be the first to respond!</p>
+{% endif %}
+
+<!-- Reply Form -->
+<div class="card shadow-sm border-0 mt-4">
+  <div class="card-header bg-light fw-semibold">
+    <i class="bi bi-reply"></i> Write a Reply
+  </div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <textarea name="content" class="form-control" rows="3"
+                  placeholder="Write your reply..." required></textarea>
+      </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="is_anonymous" id="anonReply">
+        <label class="form-check-label" for="anonReply">Reply anonymously</label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <i class="bi bi-send"></i> Post Reply
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

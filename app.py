@@ -6,6 +6,7 @@ from routes.auth import auth
 from routes.student import student
 from routes.coordinator import coordinator
 from routes.admin import admin
+from routes.community import community
 import config, os
 
 # ✅ STEP 1 — Create app FIRST
@@ -54,6 +55,7 @@ app.register_blueprint(auth)
 app.register_blueprint(student)
 app.register_blueprint(coordinator)
 app.register_blueprint(admin)
+app.register_blueprint(community)
 
 with app.app_context():
     db.create_all()
