@@ -1,54 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrievanceAI — Smart College Grievance System</title>
+    <title>GrievanceAI — Sri Ramakrishna Engineering College</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        * {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; width: 100%; }
+        body { font-family: 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; }
+
+        /* ── College Header ── */
+        .college-header {
+            background: #ffffff;
+            border-bottom: 4px solid #006400;
+            padding: 0.80rem 1.5rem;
+            width: 100%;
+        }
+        .college-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .clg-logo {
+            width: 300px;
+            height: 100px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .clg-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .clg-tagline {
+            font-size: 0.74rem;
+            color: #333;
+            line-height: 1.6;
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-weight: 500;
         }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
+        .clg-address {
+            font-size: 0.71rem;
+            color: #555;
+            margin: 0.1rem 0 0;
         }
-
-        /* Navbar */
-        .navbar {
-            background: #1a1a2e;
-            padding: 1rem 1.5rem;
+        .clg-badges {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+            margin-top: 0.35rem;
         }
-
-        .navbar-brand {
-            font-size: 1.4rem;
+        .clg-badge {
+            background: #006400;
+            color: #fff;
+            font-size: 0.65rem;
             font-weight: 700;
-            color: #4f8ef7 !important;
+            padding: 0.22rem 0.65rem;
+            border-radius: 4px;
+        }
+        .clg-badge.gold { background: linear-gradient(135deg, #b8860b, #daa520); }
+        .clg-badge.blue { background: #1565c0; }
+
+        @media (max-width: 768px) {
+            .clg-logo { width: 190px; height: 75px; }
+            .clg-badges { display: none; }
         }
 
-        .nav-btn {
-            border: 1px solid #4f8ef7;
-            color: #4f8ef7;
-            padding: 0.4rem 1.2rem;
-            border-radius: 6px;
+        /* ── Blue Navbar ── */
+        .main-navbar {
+            background: #1a4fa0;
+            padding: 0.65rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .nav-brand {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
             text-decoration: none;
-            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .nav-brand:hover { color: #cce0ff; text-decoration: none; }
+        .nav-btn {
+            border: 1.5px solid #ffffff;
+            color: #ffffff;
+            padding: 0.35rem 1.1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
             transition: all 0.2s;
+            white-space: nowrap;
         }
-
-        .nav-btn:hover {
-            background: #4f8ef7;
-            color: white;
+        .nav-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-get-started {
+            background: #ffffff;
+            color: #1a4fa0;
+            padding: 0.35rem 1.1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
+        .btn-get-started:hover { background: #e3f0ff; color: #1a4fa0; }
 
-        /* Hero */
+        /* ── Hero — White with Blue ── */
         .hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 90vh;
+            background: linear-gradient(135deg, #1a4fa0 0%, #1565c0 50%, #1976d2 100%);
+            min-height: 82vh;
             display: flex;
             align-items: center;
             color: white;
@@ -56,456 +127,384 @@
             overflow: hidden;
             padding: 4rem 0;
         }
-
         .hero::before {
             content: '';
             position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(79, 142, 247, 0.15) 0%, transparent 70%);
-            top: -100px;
-            right: -100px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            top: -150px; right: -150px;
             border-radius: 50%;
         }
-
-        /* Mobile hero — stacked, centered */
-        @media (max-width: 991px) {
-            .hero {
-                min-height: auto;
-                padding: 2.5rem 0;
-                align-items: flex-start;
-            }
-
-            .hero .container {
-                padding-top: 0;
-            }
-
-            .hero-text-col {
-                text-align: center;
-            }
-
-            .hero-text-col .d-flex {
-                justify-content: center;
-            }
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            bottom: -100px; left: -100px;
+            border-radius: 50%;
         }
-
+        @media (max-width: 991px) {
+            .hero { min-height: auto; padding: 2.5rem 0; }
+            .hero-text-col { text-align: center; }
+            .hero-text-col .d-flex { justify-content: center; }
+        }
         .hero-title {
-            font-size: 2rem;
-            font-weight: 800;
-            line-height: 1.2;
+            font-size: 3.8rem;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            color: #ffffff;
         }
-
-        @media (min-width: 992px) {
-            .hero-title {
-                font-size: 3.2rem;
-            }
-        }
-
-        .hero-title span {
-            color: #4f8ef7;
-        }
-
+        @media (max-width: 991px) { .hero-title { font-size: 2.5rem; } }
         .hero-subtitle {
-            font-size: 0.95rem;
-            color: #a0aec0;
-            margin: 1.2rem 0 1.8rem;
-            line-height: 1.7;
-        }
-
-        .btn-primary-custom {
-            background: #4f8ef7;
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
             font-size: 1rem;
-            border: none;
+            color: rgba(255,255,255,0.82);
+            margin: 1rem 0 1.8rem;
+            line-height: 1.75;
+        }
+        .btn-hero-primary {
+            background: #ffffff;
+            color: #1a4fa0;
+            padding: 0.8rem 2.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
             transition: all 0.2s;
             display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
-
-        .btn-primary-custom:hover {
-            background: #3a7bd5;
-            color: white;
+        .btn-hero-primary:hover {
+            background: #e3f0ff;
+            color: #1a4fa0;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 142, 247, 0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
-
-        .btn-secondary-custom {
+        .btn-hero-secondary {
             background: transparent;
-            color: #a0aec0;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
+            color: rgba(255,255,255,0.9);
+            padding: 0.8rem 2.2rem;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 600;
             font-size: 1rem;
-            border: 1px solid #4a5568;
+            border: 2px solid rgba(255,255,255,0.5);
             transition: all 0.2s;
             display: inline-block;
         }
-
-        .btn-secondary-custom:hover {
-            border-color: #4f8ef7;
-            color: #4f8ef7;
+        .btn-hero-secondary:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255,255,255,0.1);
         }
-
-        /* Hero Card */
         .hero-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
             border-radius: 16px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
+            padding: 1.75rem;
+            backdrop-filter: blur(16px);
         }
-
-        @media (max-width: 991px) {
-            .hero-card {
-                margin-top: 2rem;
-            }
-        }
-
-        .hero-stat {
-            text-align: center;
-            padding: 0.8rem;
-        }
-
-        .hero-stat .number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #4f8ef7;
-        }
-
-        .hero-stat .label {
-            font-size: 0.8rem;
-            color: #a0aec0;
-            margin-top: 0.2rem;
-        }
-
-        /* Flow diagram */
-        .flow-scroll {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
+        @media (max-width: 991px) { .hero-card { margin-top: 2rem; } }
+        .hero-stat { text-align: center; padding: 0.8rem; }
+        .hero-stat .number { font-size: 2rem; font-weight: 900; color: #ffffff; }
+        .hero-stat .label { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem; }
+        .flow-scroll { overflow-x: auto; }
         .flow-inner {
-            min-width: 300px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            color: #a0aec0;
-            font-size: 0.75rem;
-            padding: 0.5rem 0;
+            min-width: 300px; display: flex;
+            justify-content: space-between; align-items: center;
+            text-align: center; color: rgba(255,255,255,0.7);
+            font-size: 0.78rem; padding: 0.5rem 0;
         }
+        .hero::before,
+.hero::after {
+    pointer-events: none;
+    z-index: 0;
+}
 
-        /* Features */
-        .features {
-            background: #f8f9fa;
-            padding: 4rem 0;
-        }
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
 
+        /* ── Features ── */
+        .features { background: #f5f8ff; padding: 4.5rem 0; }
         .section-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 0.5rem;
+            font-size: 1.9rem; font-weight: 800;
+            text-align: center; margin-bottom: 0.5rem;
+            color: #1a4fa0;
         }
-
-        .section-subtitle {
-            text-align: center;
-            color: #6c757d;
-            margin-bottom: 3rem;
-        }
-
+        .section-subtitle { text-align: center; color: #555; margin-bottom: 3rem; }
         .feature-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            height: 100%;
-            border: 1px solid #e9ecef;
-            transition: all 0.3s;
+            background: white; border-radius: 12px; padding: 1.6rem;
+            height: 100%; border: 1.5px solid #dce8ff; transition: all 0.3s;
         }
-
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            border-color: #4f8ef7;
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(26,79,160,0.12);
+            border-color: #1a4fa0;
         }
-
         .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            margin-bottom: 0.8rem;
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; margin-bottom: 0.8rem;
         }
 
-        /* How It Works */
-        .how-it-works {
-            background: white;
-            padding: 4rem 0;
-        }
-
+        /* ── How It Works ── */
+        .how-it-works { background: #ffffff; padding: 4.5rem 0; }
         .step-number {
-            width: 48px;
-            height: 48px;
-            background: #4f8ef7;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.2rem;
-            margin: 0 auto 1rem;
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, #1a4fa0, #1976d2);
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.2rem; margin: 0 auto 1rem;
+            box-shadow: 0 4px 14px rgba(26,79,160,0.3);
         }
 
-        /* CTA */
+        /* ── Stats Bar ── */
+        .stats-bar {
+            background: #1a4fa0;
+            padding: 2rem 0;
+            color: white;
+        }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 2.2rem; font-weight: 900; color: #ffffff; }
+        .stat-lbl { font-size: 0.82rem; color: rgba(255,255,255,0.75); margin-top: 0.2rem; }
+
+        /* ── CTA ── */
         .cta {
-            background: linear-gradient(135deg, #1a1a2e, #0f3460);
-            padding: 4rem 0;
-            color: white;
-            text-align: center;
+            background: linear-gradient(135deg, #1a4fa0, #1565c0);
+            padding: 4.5rem 0; color: white; text-align: center;
         }
+        .cta h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+        .cta p { color: rgba(255,255,255,0.78); margin-bottom: 2rem; font-size: 1rem; }
+        .cta-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
 
-        .cta h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        .cta p {
-            color: #a0aec0;
-            margin-bottom: 2rem;
-        }
-
-        .cta-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        /* Footer */
+        /* ── Footer ── */
         footer {
-            background: #1a1a2e;
-            color: #4a5568;
+            background: #0d2d6b;
+            color: rgba(255,255,255,0.45);
             text-align: center;
             padding: 1.5rem;
             font-size: 0.85rem;
         }
+        footer span { color: #90c3ff; }
+
+        /* ── Divider ── */
+        .blue-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #1a4fa0, #42a5f5, #1a4fa0);
+        }
     </style>
 </head>
-
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar d-flex justify-content-between align-items-center">
-        <span class="navbar-brand"><i class="bi bi-shield-check"></i> GrievanceAI</span>
-        <div class="d-flex gap-2 align-items-center">
-            <a href="/login" class="nav-btn">Sign In</a>
-            <a href="/login?action=register" class="btn-primary-custom"
-                style="padding:0.4rem 1.2rem; font-size:0.9rem;">
-                Get Started
-            </a>
-        </div>
-    </nav>
-
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <div class="row align-items-center">
-
-                <!-- Text Column -->
-                <div class="col-12 col-lg-6 hero-text-col">
-                    <h1 class="hero-title">
-                        A Smarter Way to<br>
-                        <span>Resolve Grievances</span>
-                    </h1>
-                    <p class="hero-subtitle">
-                        AI-powered grievance management for colleges. Submit issues, get them
-                        automatically classified and routed to the right authority — in seconds.
-                    </p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="/login?action=register" class="btn-primary-custom">Get Started →</a>
-                        <a href="/login" class="btn-secondary-custom">Sign In</a>
-                    </div>
-                </div>
-
-                <!-- Card Column -->
-                <div class="col-12 col-lg-6 mt-4 mt-lg-0">
-                    <div class="hero-card">
-                        <p class="text-center mb-3" style="color:#a0aec0; font-size:0.85rem;">SYSTEM OVERVIEW</p>
-                        <div class="row g-0">
-                            <div class="col-4 hero-stat border-end"
-                                style="border-color:rgba(255,255,255,0.1)!important">
-                                <div class="number">AI</div>
-                                <div class="label">Powered by Gemini</div>
-                            </div>
-                            <div class="col-4 hero-stat border-end"
-                                style="border-color:rgba(255,255,255,0.1)!important">
-                                <div class="number">2</div>
-                                <div class="label">Priority Levels</div>
-                            </div>
-                            <div class="col-4 hero-stat">
-                                <div class="number">9+</div>
-                                <div class="label">Departments</div>
-                            </div>
-                        </div>
-                        <hr style="border-color:rgba(255,255,255,0.1)">
-                        <div class="flow-scroll">
-                            <div class="flow-inner">
-                                <div>
-                                    <div style="font-size:1.3rem">📝</div>
-                                    <div>Submit</div>
-                                </div>
-                                <div style="color:#4f8ef7">→</div>
-                                <div>
-                                    <div style="font-size:1.3rem">🤖</div>
-                                    <div>AI Analysis</div>
-                                </div>
-                                <div style="color:#4f8ef7">→</div>
-                                <div>
-                                    <div style="font-size:1.3rem">✅</div>
-                                    <div>Approval</div>
-                                </div>
-                                <div style="color:#4f8ef7">→</div>
-                                <div>
-                                    <div style="font-size:1.3rem">📨</div>
-                                    <div>Resolved</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+<!-- ── 1. College Header ── -->
+<div class="college-header">
+    <div class="college-header-inner">
+        <img src="{{ url_for('static', filename='srec_logo.png') }}"
+             alt="SREC Logo" class="clg-logo">
+        <div class="clg-right">
+            <p class="clg-tagline">
+                <strong>Educational Service:</strong> SNR Sons Charitable Trust &nbsp;&middot;&nbsp;
+                Autonomous Institution, Reaccredited by NAAC with <strong>'A+' Grade</strong>
+                &nbsp;&middot;&nbsp; Approved by AICTE &amp; Permanently Affiliated to Anna University, Chennai
+                &nbsp;&middot;&nbsp; ISO 9001:2015 Certified &amp; All Eligible Programmes Accredited by NBA
+            </p>
+            <p class="clg-address">
+                Vattamalaipalayam, N.G.G.O. Colony Post, Coimbatore – 641 022, Tamil Nadu, India
+            </p>
+            <div class="clg-badges">
+                <span class="clg-badge gold">NAAC A+</span>
+                <span class="clg-badge">AICTE</span>
+                <span class="clg-badge">ISO 9001:2015</span>
+                <span class="clg-badge">NBA</span>
+                <span class="clg-badge blue">Autonomous</span>
+                <span class="clg-badge blue">Anna University</span>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- Features -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Everything You Need</h2>
-            <p class="section-subtitle">Built to make grievance handling fast, fair, and transparent</p>
-            <div class="row g-4">
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#e8f0fe">
-                            <i class="bi bi-robot" style="color:#4f8ef7"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">AI Classification</h5>
-                        <p class="text-muted small">Gemini AI automatically categorizes your grievance — Lab,
-                            Infrastructure, Discipline, and more — instantly.</p>
-                    </div>
+<!-- ── 2. Blue Navbar ── -->
+
+
+<div class="blue-divider"></div>
+
+<!-- ── 3. Hero ── -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-lg-6 hero-text-col">
+                <h1 class="hero-title">GrievanceAI</h1>
+                <p class="hero-subtitle">
+                    AI-powered grievance management for
+                    <strong style="color:#ffffff">Sri Ramakrishna Engineering College</strong>.
+                    Submit issues, get them automatically classified and routed
+                    to the right authority — in seconds.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="/login?action=register" class="btn-hero-primary">Get Started →</a>
+                    <a href="/login" class="btn-hero-secondary">Sign In</a>
                 </div>
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#fce8e8">
-                            <i class="bi bi-lightning-charge" style="color:#e53e3e"></i>
+            </div>
+            <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+                <div class="hero-card">
+                    <p class="text-center mb-3" style="color:rgba(255,255,255,0.6); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">System Overview</p>
+                    <div class="row g-0">
+                        <div class="col-4 hero-stat" style="border-right:1px solid rgba(255,255,255,0.2)">
+                            <div class="number">AI</div>
+                            <div class="label">Powered by Gemini</div>
                         </div>
-                        <h5 class="fw-bold mb-2">Smart Routing</h5>
-                        <p class="text-muted small">Grievances are automatically sent to the right authority — HOD,
-                            Warden, or Admin — without manual intervention.</p>
+                        <div class="col-4 hero-stat" style="border-right:1px solid rgba(255,255,255,0.2)">
+                            <div class="number">2</div>
+                            <div class="label">Priority Levels</div>
+                        </div>
+                        <div class="col-4 hero-stat">
+                            <div class="number">9+</div>
+                            <div class="label">Departments</div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#e8fce8">
-                            <i class="bi bi-image" style="color:#38a169"></i>
+                    <hr style="border-color:rgba(255,255,255,0.15); margin:1rem 0">
+                    <div class="flow-scroll">
+                        <div class="flow-inner">
+                            <div><div style="font-size:1.4rem">📝</div><div>Submit</div></div>
+                            <div style="color:rgba(255,255,255,0.5)">→</div>
+                            <div><div style="font-size:1.4rem">🤖</div><div>AI Analysis</div></div>
+                            <div style="color:rgba(255,255,255,0.5)">→</div>
+                            <div><div style="font-size:1.4rem">✅</div><div>Approval</div></div>
+                            <div style="color:rgba(255,255,255,0.5)">→</div>
+                            <div><div style="font-size:1.4rem">📨</div><div>Resolved</div></div>
                         </div>
-                        <h5 class="fw-bold mb-2">Image Evidence</h5>
-                        <p class="text-muted small">Upload photos as evidence. AI analyzes images to detect violence,
-                            damage, or cleanliness issues automatically.</p>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#fef3e8">
-                            <i class="bi bi-shield-exclamation" style="color:#dd6b20"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Priority System</h5>
-                        <p class="text-muted small">High priority grievances trigger instant email alerts. Medium
-                            priority grievances appear in the dashboard queue.</p>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#f0e8fe">
-                            <i class="bi bi-people" style="color:#805ad5"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Coordinator Approval</h5>
-                        <p class="text-muted small">Academic coordinators review and approve grievances before they
-                            reach authorities, ensuring quality control.</p>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background:#e8fefe">
-                            <i class="bi bi-graph-up" style="color:#2b6cb0"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Live Dashboard</h5>
-                        <p class="text-muted small">Track grievance status in real time. See how many students face the
-                            same issue with the voting feature.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- How It Works -->
-    <section class="how-it-works">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Four simple steps from complaint to resolution</p>
-            <div class="row g-4 text-center">
-                <div class="col-6 col-md-3">
-                    <div class="step-number">1</div>
-                    <h6 class="fw-bold">Submit</h6>
-                    <p class="text-muted small">Log in with your college email and submit a text or image grievance</p>
+<!-- ── 4. Stats Bar ── -->
+<div class="stats-bar">
+    <div class="container">
+        <div class="row g-3 text-center">
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-num">9+</div>
+                <div class="stat-lbl">Departments</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-num">AI</div>
+                <div class="stat-lbl">Gemini Powered</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-num">24/7</div>
+                <div class="stat-lbl">Available</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-num">100%</div>
+                <div class="stat-lbl">Transparent</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── 5. Features ── -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-subtitle">Built to make grievance handling fast, fair, and transparent</p>
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#dbeafe"><i class="bi bi-robot" style="color:#1a4fa0"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">AI Classification</h5>
+                    <p class="text-muted small">Gemini AI automatically categorizes your grievance — Lab, Infrastructure, Discipline — instantly.</p>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="step-number">2</div>
-                    <h6 class="fw-bold">AI Analysis</h6>
-                    <p class="text-muted small">Gemini AI classifies, prioritizes, and determines the correct authority
-                    </p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#fee2e2"><i class="bi bi-lightning-charge" style="color:#dc2626"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">Smart Routing</h5>
+                    <p class="text-muted small">Grievances are automatically sent to the right authority — HOD, Warden, or Admin — without manual intervention.</p>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="step-number">3</div>
-                    <h6 class="fw-bold">Approval</h6>
-                    <p class="text-muted small">Academic coordinator reviews and approves before forwarding</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#dcfce7"><i class="bi bi-image" style="color:#16a34a"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">Image Evidence</h5>
+                    <p class="text-muted small">Upload photos as evidence. AI analyzes images to detect violence, damage, or cleanliness issues automatically.</p>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="step-number">4</div>
-                    <h6 class="fw-bold">Resolution</h6>
-                    <p class="text-muted small">Authority reviews and resolves the grievance, student is notified</p>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#fef3c7"><i class="bi bi-shield-exclamation" style="color:#d97706"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">Priority System</h5>
+                    <p class="text-muted small">High priority grievances trigger instant email alerts. Medium priority grievances appear in the dashboard queue.</p>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#ede9fe"><i class="bi bi-people" style="color:#7c3aed"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">Coordinator Approval</h5>
+                    <p class="text-muted small">Academic coordinators review and approve grievances before they reach authorities, ensuring quality control.</p>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#dbeafe"><i class="bi bi-graph-up" style="color:#1a4fa0"></i></div>
+                    <h5 class="fw-bold mb-2" style="color:#1a4fa0">Live Dashboard</h5>
+                    <p class="text-muted small">Track grievance status in real time. See how many students face the same issue with the voting feature.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- CTA -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Submit Your Grievance?</h2>
-            <p>Join your college community — get issues resolved faster with AI</p>
-            <div class="cta-buttons">
-                <a href="/login?action=register" class="btn-primary-custom">Create Account →</a>
-                <a href="/login" class="btn-secondary-custom">Sign In</a>
+<!-- ── 6. How It Works ── -->
+<section class="how-it-works">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Four simple steps from complaint to resolution</p>
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="step-number">1</div>
+                <h6 class="fw-bold" style="color:#1a4fa0">Submit</h6>
+                <p class="text-muted small">Log in with your college email and submit a text or image grievance</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-number">2</div>
+                <h6 class="fw-bold" style="color:#1a4fa0">AI Analysis</h6>
+                <p class="text-muted small">Gemini AI classifies, prioritizes, and determines the correct authority</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-number">3</div>
+                <h6 class="fw-bold" style="color:#1a4fa0">Approval</h6>
+                <p class="text-muted small">Academic coordinator reviews and approves before forwarding</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-number">4</div>
+                <h6 class="fw-bold" style="color:#1a4fa0">Resolution</h6>
+                <p class="text-muted small">Authority reviews and resolves the grievance, student is notified</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer>
-        <p>© 2026 GrievanceAI — AI-Powered Student Grievance System &nbsp;|&nbsp; Batch 2CS73</p>
-    </footer>
+<!-- ── 7. CTA ── -->
+<section class="cta">
+    <div class="container">
+        <h2>Ready to Submit Your Grievance?</h2>
+        <p>Join Sri Ramakrishna Engineering College's smart grievance portal</p>
+        <div class="cta-buttons">
+            <a href="/login?action=register" class="btn-hero-primary">Create Account →</a>
+            <a href="/login" class="btn-hero-secondary">Sign In</a>
+        </div>
+    </div>
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ── 8. Footer ── -->
+<footer>
+    <p>© 2026 <span>GrievanceAI</span> — Sri Ramakrishna Engineering College, Coimbatore &nbsp;|&nbsp; Batch 2CS73</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

@@ -18,7 +18,6 @@ ROLE_MAP = {
     "discipline":    "discipline",
 }
 
-
 def find_staff_for_grievance(route_to, student_dept):
     """Find the right Staff member based on route_to and student's department."""
     role = ROLE_MAP.get(route_to.lower().strip(), "admin")
@@ -42,7 +41,6 @@ def find_staff_for_grievance(route_to, student_dept):
 
     return staff
 
-
 # ─── ROLE GUARD ───────────────────────────────────────────
 def coordinator_required(f):
     from functools import wraps
@@ -54,15 +52,13 @@ def coordinator_required(f):
         return f(*args, **kwargs)
     return decorated
 
-
-# ─── COORDINATOR PANEL ────────────────────────────────────
+# ─── COORDINATOR DASHBOARD ────────────────────────────────
 @coordinator.route("/coordinator")
 @login_required
 @coordinator_required
-def panel():
+def dashboard():    # ✅ Fixed: was panel(), now dashboard()
     grievances = Grievance.query.order_by(Grievance.submitted_at.desc()).all()
     return render_template("coordinator/dashboard.html", grievances=grievances)
-
 
 # ─── COORDINATOR ACTION ───────────────────────────────────
 @coordinator.route("/coordinator/action/<int:grievance_id>", methods=["POST"])
@@ -75,7 +71,6 @@ def action(grievance_id):
     student  = g.student
 
     if decision == "forward":
-        # ✅ Find correct Staff based on AI route + student department
         assigned_staff = find_staff_for_grievance(
             g.route_to or "admin",
             student.department
@@ -116,4 +111,4 @@ def action(grievance_id):
         )
         flash("Grievance declined. Student notified via email.", "warning")
 
-    return redirect(url_for("coordinator.dashboard"))
+    return redirect(url_for("coordinator.dashboard"))  # ✅ Now matches function name

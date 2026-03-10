@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template   # ✅ added render_template
 from flask_login import LoginManager
 from flask_mail import Mail
 from models import db, Student, Staff
@@ -7,14 +7,14 @@ from routes.student import student
 from routes.coordinator import coordinator
 from routes.admin import admin
 from routes.community import community
+from dotenv import load_dotenv
+load_dotenv() 
 import config, os
 
-# ✅ STEP 1 — Create app FIRST
 app = Flask(__name__)
 app.config.from_object(config)
 os.makedirs("static/uploads", exist_ok=True)
 
-# ✅ STEP 2 — Mail config AFTER app created
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -23,7 +23,6 @@ app.config['MAIL_USERNAME'] = 'grievanceaisrec@gmail.com'
 app.config['MAIL_PASSWORD'] = 'yjzzujisfyprmdbf'
 app.config['MAIL_DEFAULT_SENDER'] = 'grievanceaisrec@gmail.com'
 
-# ✅ STEP 3 — Initialize extensions
 mail = Mail(app)
 db.init_app(app)
 
@@ -38,6 +37,11 @@ def load_user(user_id):
     elif user_id.startswith("f_"):
         return db.session.get(Staff, int(user_id[2:]))
     return None
+
+# ✅ Homepage route — serves index.html
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route("/test-gemini")
 def test_gemini():

@@ -31,6 +31,7 @@ def login():
             login_user(user)
             return redirect(url_for("student.dashboard"))
         flash("Invalid email or password.", "danger")
+    action = request.args.get('action', 'login')
     return render_template("auth/login.html")
 
 
