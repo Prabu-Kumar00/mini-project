@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .avatar-circle {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a4fa0, #1976d2);
+    color: white; font-size: 2rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 2px; flex-shrink: 0;
+  }
+  .profile-card {
+    border: none; border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
+  .profile-card .card-header {
+    background: linear-gradient(135deg, #1a4fa0, #1976d2);
+    color: white; border-radius: 16px 16px 0 0 !important;
+    padding: 1.25rem 1.5rem;
+  }
+  .info-badge {
+    background: #f0f5ff; border: 1px solid #dce8ff;
+    border-radius: 8px; padding: 0.5rem 1rem;
+    font-size: 0.85rem; color: #1a4fa0;
+    display: inline-block; margin: 0.2rem;
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #94a3b8; margin-bottom: 1rem;
+  }
+</style>
+
+<div class="container py-4" style="max-width:780px;">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }} rounded-3">{{ message }}</div>
+  {% endfor %}
+  {% endwith %}
+
+  <!-- Avatar + Name Header -->
+  <div class="profile-card card mb-4">
+    <div class="card-header">
+      <div class="d-flex align-items-center gap-3">
+        <!-- Initials Avatar -->
+        <div class="avatar-circle">
+          {% set words = current_user.name.strip().split() %}
+          {% if words|length >= 2 %}
+            {{ words[0][0] | upper }}{{ words[-1][0] | upper }}
+          {% else %}
+            {{ words[0][0] | upper }}
+          {% endif %}
+        </div>
+        <div>
+          <h5 class="mb-0 fw-bold">{{ current_user.name }}</h5>
+          <small class="opacity-75">{{ current_user.email }}</small><br>
+          <span class="badge mt-1"
+            style="background:rgba(255,255,255,0.25); font-size:0.75rem;">
+            {{ current_user.role | upper }}
+            {% if current_user.department %} · {{ current_user.department }}{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read-only Info Badges -->
+    <div class="card-body">
+      <p class="section-title">Account Info</p>
+      <div>
+        {% if current_user.role == "student" %}
+          <span class="info-badge"><i class="bi bi-person-badge me-1"></i>{{ current_user.roll_no }}</span>
+          <span class="info-badge"><i class="bi bi-building me-1"></i>{{ current_user.department }}</span>
+          <span class="info-badge"><i class="bi bi-mortarboard me-1"></i>{{ current_user.class_name }} - {{ current_user.section }}</span>
+        {% else %}
+          <span class="info-badge"><i class="bi bi-shield me-1"></i>{{ current_user.role | upper }}</span>
+          {% if current_user.department %}
+          <span class="info-badge"><i class="bi bi-building me-1"></i>{{ current_user.department }}</span>
+          {% endif %}
+        {% endif %}
+        <span class="info-badge"><i class="bi bi-envelope me-1"></i>{{ current_user.email }}</span>
+        {% if current_user.phone %}
+        <span class="info-badge"><i class="bi bi-telephone me-1"></i>{{ current_user.phone }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ── Update Name & Phone ── -->
+    <div class="col-md-6">
+      <div class="profile-card card h-100">
+        <div class="card-body p-4">
+          <p class="section-title">Edit Profile</p>
+          <form method="POST" action="/profile/update">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Full Name</label>
+              <input type="text" name="name" class="form-control"
+                     value="{{ current_user.name }}" required>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold small">Phone Number</label>
+              <input type="tel" name="phone" class="form-control"
+                     value="{{ current_user.phone or '' }}"
+                     placeholder="e.g. 9876543210">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold">
+              <i class="bi bi-save me-1"></i> Save Changes
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Change Password ── -->
+    <div class="col-md-6">
+      <div class="profile-card card h-100">
+        <div class="card-body p-4">
+          <p class="section-title">Change Password</p>
+          <form method="POST" action="/profile/change-password">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Current Password</label>
+              <input type="password" name="old_password" class="form-control"
+                     placeholder="Enter current password" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">New Password</label>
+              <input type="password" name="new_password" class="form-control"
+                     placeholder="Min. 6 characters" required>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold small">Confirm New Password</label>
+              <input type="password" name="confirm_password" class="form-control"
+                     placeholder="Repeat new password" required>
+            </div>
+
+            <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
+              <i class="bi bi-lock me-1"></i> Update Password
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

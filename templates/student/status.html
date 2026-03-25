@@ -13,8 +13,13 @@
       <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
     </div>
     <p class="mb-1"><strong>Category:</strong> {{ g.category }}</p>
-    <p class="mb-1"><strong>Routed To:</strong> {{ g.route_to }}</p>
-    <p class="mb-2"><strong>Summary:</strong> {{ g.description }}</p>
+
+<p class="mb-1">
+<strong>Routed To:</strong>
+{{ g.final_department if g.final_department else g.route_to }}
+</p>
+
+<p class="mb-2"><strong>Summary:</strong> {{ g.description }}</p>
 
     {% if g.status == "Pending Approval" %}
     <div class="d-flex gap-2">

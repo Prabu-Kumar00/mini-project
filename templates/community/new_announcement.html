@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header fw-bold text-white"
+           style="background:linear-gradient(135deg,#1a4fa0,#1976d2);">
+        <i class="bi bi-megaphone me-2"></i> Post Announcement
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Title</label>
+            <input type="text" name="title" class="form-control"
+                   placeholder="e.g. Lab timings changed for this week" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Target Department</label>
+            <select name="department" class="form-select">
+              <option value="ALL">📢 All Departments</option>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="EEE">EEE</option>
+              <option value="IT">IT</option>
+              <option value="MECH">MECH</option>
+              <option value="CIVIL">CIVIL</option>
+              <option value="EIE">EIE</option>
+              <option value="BME">BME</option>
+              <option value="AERO">AERO</option>
+              <option value="RA">RA</option>
+              <option value="AIDS">AIDS</option>
+              <option value="PG">PG</option>
+              <option value="MBA">MBA</option>
+              <option value="NANO">NANO</option>
+            </select>
+            <div class="form-text">
+              <i class="bi bi-info-circle me-1"></i>
+              Select a specific dept or "All Departments" to broadcast to everyone.
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Message</label>
+            <textarea name="content" class="form-control" rows="5"
+                      placeholder="Write your announcement here..." required></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary fw-bold">
+              <i class="bi bi-megaphone me-1"></i> Post Announcement
+            </button>
+            <a href="{{ url_for('admin.dashboard') }}"
+               class="btn btn-outline-secondary">Cancel</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

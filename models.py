@@ -18,6 +18,8 @@ class Student(UserMixin, db.Model):
     strike_count = db.Column(db.Integer, default=0)
     is_blocked = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(20), default="student")
+    phone = db.Column(db.String(15), nullable=True)          # ✅ NEW
+    name_updated = db.Column(db.Boolean, default=False)      # ✅ NEW
 
     def get_id(self):
         return f"s_{self.id}"
@@ -26,12 +28,14 @@ class Student(UserMixin, db.Model):
 class Staff(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    name_updated = db.Column(db.Boolean, default=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(30), nullable=False)
     department = db.Column(db.String(50), nullable=True)
     is_active = db.Column(db.Boolean, default=True)
     is_blocked = db.Column(db.Boolean, default=False)
+    phone = db.Column(db.String(15), nullable=True)          # ✅ NEW
 
     def get_id(self):
         return f"f_{self.id}"
@@ -50,6 +54,7 @@ class Grievance(db.Model):
     status = db.Column(db.String(30), default="Pending Approval")
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
     yes_votes = db.Column(db.Integer, default=0)
+    final_department = db.Column(db.String(100), nullable=True)
     no_votes = db.Column(db.Integer, default=0)
 
     forwarded_to = db.Column(db.String(100), nullable=True)
@@ -109,3 +114,24 @@ class ReplyUpvote(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)          # ✅ fixed
 
     __table_args__ = (db.UniqueConstraint("reply_id", "student_id"),)
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    title = db.Column(db.String(200), nullable=False)
+
+    message = db.Column(db.Text, nullable=False)
+
+    target_dept = db.Column(db.String(50), default="ALL")
+
+    author_id = db.Column(db.Integer, db.ForeignKey("staff.id"), nullable=False)
+
+    posted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    expires_at = db.Column(db.DateTime, nullable=True)
+
+    is_active = db.Column(db.Boolean, default=True)
+
+    is_urgent = db.Column(db.Boolean, default=False)
+
+    staff = db.relationship("Staff", backref="announcements")

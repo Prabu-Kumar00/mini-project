@@ -1,9 +1,129 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h4 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h4>
+<style>
+  .profile-alert {
+    background: linear-gradient(135deg, #fff3cd, #ffeeba);
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px; padding: 0.9rem 1.2rem;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .profile-alert .alert-text { font-size: 0.92rem; color: #92400e; }
+  .btn-update-profile {
+    background: #f59e0b; color: white; border: none;
+    border-radius: 6px; padding: 0.4rem 1.1rem;
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn-update-profile:hover { background: #d97706; color: white; }
 
-<!-- Filter Tab Buttons -->
+  .welcome-card {
+    background: linear-gradient(135deg, #1a4fa0, #1976d2);
+    border-radius: 16px; padding: 1.5rem 2rem;
+    color: white; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .welcome-card .position-badge {
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 0.3rem 1rem;
+    font-size: 0.8rem; font-weight: 600;
+    display: inline-block; margin-bottom: 0.5rem;
+  }
+  .welcome-card h2 { font-size: 1.6rem; font-weight: 800; margin: 0; }
+  .welcome-card p  { color: rgba(255,255,255,0.75); margin: 0.2rem 0 0; font-size: 0.9rem; }
+  .welcome-time    { font-size: 0.82rem; color: rgba(255,255,255,0.6); text-align: right; }
+
+  .filter-tab {
+    background: white;
+    border: 2px solid #dce8ff;
+    border-radius: 12px; padding: 1rem;
+    text-align: center; cursor: pointer;
+    transition: all 0.2s; user-select: none;
+  }
+  .filter-tab:hover {
+    border-color: #1a4fa0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(26,79,160,0.12);
+  }
+  .filter-tab.active-tab {
+    border-color: #1a4fa0;
+    background: #f0f5ff;
+    box-shadow: 0 4px 15px rgba(26,79,160,0.15);
+  }
+
+  .grievance-card { transition: all 0.2s; border-radius: 12px !important; }
+  .grievance-card.hidden { display: none !important; }
+  .badge-new {
+    background: #dcfce7; color: #16a34a;
+    font-size: 0.7rem; padding: 3px 8px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .badge-viewed {
+    background: #f5f5f5; color: #757575;
+    font-size: 0.7rem; padding: 3px 8px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .student-info {
+    background: #f5f8ff; border-radius: 8px;
+    padding: 0.75rem 1rem; margin-bottom: 1rem;
+    border: 1px solid #dce8ff;
+  }
+</style>
+
+{% if not current_user.name_updated %}
+<div class="profile-alert">
+  <div class="alert-text">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <strong>Update your profile!</strong>
+    You're using a default account name. Please set your real name and change your password.
+  </div>
+  <a href="/profile" class="btn-update-profile">
+    <i class="bi bi-pencil"></i> Update Profile
+  </a>
+</div>
+{% endif %}
+
+<div class="welcome-card">
+  <div>
+    <div class="position-badge">
+      {% if current_user.role == 'admin' %}🛡️ Admin
+      {% elif current_user.role == 'hod' %}🏫 HOD — {{ current_user.department }} Department
+      {% elif current_user.role == 'coordinator' %}👨‍🏫 Academic Coordinator{% if current_user.department %} — {{ current_user.department }}{% endif %}
+      {% elif current_user.role == 'discipline' %}⚖️ Discipline Committee
+      {% endif %}
+    </div>
+    <h2>Welcome, {{ current_user.name }}! 👋</h2>
+    <p>Here's an overview of all grievances assigned to you.</p>
+  </div>
+  <div class="d-flex flex-column align-items-end gap-2">
+    <div class="welcome-time">
+      <i class="bi bi-clock"></i>
+      <span id="live-time"></span>
+    </div>
+    {% if current_user.role in ['admin', 'hod', 'coordinator'] %}
+      <a href="{{ url_for('community.new_announcement') }}"
+        class="btn btn-sm"
+          style="background:rgba(255,255,255,0.2); color:white;
+          border:1px solid rgba(255,255,255,0.4); border-radius:8px;">
+        <i class="bi bi-megaphone me-1"></i> Post Announcement
+      </a>
+    {% endif %}
+
+    {% if current_user.role in ['admin', 'hod'] %}
+    <a href="/admin/staff"
+       class="btn btn-sm"
+       style="background:rgba(255,255,255,0.2); color:white;
+              border:1px solid rgba(255,255,255,0.4); border-radius:8px;">
+      <i class="bi bi-people me-1"></i> Manage Staff
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Filter Tabs -->
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
     <div class="filter-tab active-tab" onclick="filterGrievances('all')" id="tab-all">
@@ -20,7 +140,8 @@
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="filter-tab" onclick="filterGrievances('In Progress')" id="tab-In Progress">
+    <!-- ✅ FIXED: was "tab-In Progress" (space = invalid ID) → now "tab-In-Progress" -->
+    <div class="filter-tab" onclick="filterGrievances('In Progress')" id="tab-In-Progress">
       <div class="fw-bold fs-4 text-info">
         {{ grievances | selectattr('status','equalto','In Progress') | list | length }}
       </div>
@@ -37,80 +158,25 @@
   </div>
 </div>
 
-<style>
-  .filter-tab {
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    padding: 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-  }
-
-  .filter-tab:hover {
-    border-color: #4f8ef7;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.15);
-  }
-
-  .filter-tab.active-tab {
-    border-color: #4f8ef7;
-    background: #f0f5ff;
-    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.2);
-  }
-
-  .grievance-card {
-    transition: all 0.2s;
-  }
-
-  .grievance-card.hidden {
-    display: none !important;
-  }
-
-  .badge-new {
-    background: #e8f5e9;
-    color: #2e7d32;
-    font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 600;
-  }
-
-  .badge-viewed {
-    background: #f5f5f5;
-    color: #757575;
-    font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 600;
-  }
-</style>
-
-<!-- Grievance Cards -->
 {% if grievances %}
 {% for g in grievances %}
-<div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'secondary' }}
+<div class="card mb-3 shadow-sm border-{{ 'danger' if g.priority == 'High' else 'primary' }}
      grievance-card" data-status="{{ g.status }}" id="grievance-{{ g.id }}">
   <div class="card-body">
 
-    <!-- Top Row -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
       <div class="d-flex gap-2 align-items-center flex-wrap">
         <span class="badge bg-{{ 'danger' if g.priority == 'High' else 'warning text-dark' }}">
           {{ g.priority }} Priority
         </span>
-        <span class="badge bg-info text-dark">{{ g.category }}</span>
-        <span class="badge-new" id="seen-{{ g.id }}" data-id="{{ g.id }}" style="cursor:pointer"
-          title="Click to mark as viewed">
-          🆕 New
+        <span class="badge bg-primary">{{ g.category }}</span>
+        <span class="badge-new" id="seen-{{ g.id }}" data-id="{{ g.id }}"
+          style="cursor:pointer" title="Click to mark as viewed">🆕 New
         </span>
       </div>
       <small class="text-muted">{{ g.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small>
     </div>
 
-    <!-- Status Badge -->
     <div class="mb-2">
       <span class="badge
         {% if g.status == 'Approved' %}bg-success
@@ -121,9 +187,8 @@
       </span>
     </div>
 
-    <!-- Student Details -->
-    <div class="bg-light p-2 rounded mb-3">
-      <strong>Student Details</strong>
+    <div class="student-info">
+      <strong class="text-primary"><i class="bi bi-person-circle me-1"></i>Student Details</strong>
       <div class="row mt-1 small">
         <div class="col-6 col-md-3"><b>Name:</b> {{ g.student.name }}</div>
         <div class="col-6 col-md-3"><b>Roll No:</b> {{ g.student.roll_no }}</div>
@@ -136,8 +201,8 @@
     <p class="mb-2"><strong>Description:</strong> {{ g.description }}</p>
 
     {% if g.image_path %}
-    <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}" class="img-thumbnail mb-3 w-100"
-      style="max-height:200px; object-fit:cover;">
+    <img src="{{ url_for('static', filename='uploads/' + g.image_path) }}"
+      class="img-thumbnail mb-3 w-100" style="max-height:200px; object-fit:cover;">
     {% endif %}
 
     <p class="small text-muted mb-2">
@@ -145,46 +210,39 @@
       <i class="bi bi-hand-thumbs-down"></i> {{ g.no_votes }} not affected
     </p>
 
-    <!-- Reply + Status Update -->
     <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center flex-wrap">
-
-      <!-- ✅ Reply Modal Trigger -->
-      <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal{{ g.id }}">
+      <button class="btn btn-outline-primary btn-sm"
+        data-bs-toggle="modal" data-bs-target="#replyModal{{ g.id }}">
         <i class="bi bi-envelope"></i> Reply via Mail
       </button>
-
-      <!-- Status Update Form -->
-      <form method="POST" action="/admin/update/{{ g.id }}" class="d-flex gap-2 flex-grow-1">
+      <form method="POST" action="/admin/update/{{ g.id }}"
+        class="d-flex gap-2 flex-grow-1">
         <select name="status" class="form-select form-select-sm flex-grow-1">
-          <option {% if g.status=='Approved' %}selected{% endif %}>Approved</option>
+          <option {% if g.status=='Approved'    %}selected{% endif %}>Approved</option>
           <option {% if g.status=='In Progress' %}selected{% endif %}>In Progress</option>
-          <option {% if g.status=='Resolved' %}selected{% endif %}>Resolved</option>
+          <option {% if g.status=='Resolved'    %}selected{% endif %}>Resolved</option>
         </select>
-        <button type="submit" class="btn btn-sm btn-dark">Update</button>
+        <button type="submit" class="btn btn-sm btn-primary">Update</button>
       </form>
     </div>
 
   </div>
 </div>
 
-<!-- ✅ Reply Modal (outside card, inside loop) -->
+<!-- Reply Modal -->
 <div class="modal fade" id="replyModal{{ g.id }}" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="background:#1a4fa0; color:white;">
         <h6 class="modal-title fw-bold">
           <i class="bi bi-envelope"></i> Reply to {{ g.student.name }}
         </h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <form method="POST" action="/admin/reply/{{ g.id }}">
         <div class="modal-body">
-          <p class="text-muted small mb-1">
-            <b>To:</b> {{ g.student.email }}
-          </p>
-          <p class="text-muted small mb-3">
-            <b>Subject:</b> Update on Your Grievance — {{ g.category }}
-          </p>
+          <p class="text-muted small mb-1"><b>To:</b> {{ g.student.email }}</p>
+          <p class="text-muted small mb-3"><b>Subject:</b> Update on Your Grievance — {{ g.category }}</p>
           <label class="form-label fw-semibold">Your Message</label>
           <textarea name="reply_message" class="form-control" rows="4"
             placeholder="Type your message to the student..."></textarea>
@@ -199,7 +257,6 @@
     </div>
   </div>
 </div>
-
 {% endfor %}
 
 {% else %}
@@ -208,12 +265,20 @@
 </div>
 {% endif %}
 
-<!-- No results message when filter returns empty -->
 <div class="alert alert-info d-none" id="no-filter-results">
   <i class="bi bi-inbox"></i> No grievances found in this category.
 </div>
 
 <script>
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('live-time').textContent =
+      now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) +
+      ' · ' + now.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+
   document.querySelectorAll('[id^="seen-"]').forEach(el => {
     const id = el.dataset.id;
     if (localStorage.getItem('viewed-' + id)) {
@@ -222,7 +287,6 @@
     }
     el.addEventListener('click', () => markViewed(id));
   });
-
   function markViewed(id) {
     localStorage.setItem('viewed-' + id, '1');
     const el = document.getElementById('seen-' + id);
@@ -232,27 +296,20 @@
 
   function filterGrievances(status) {
     document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active-tab'));
-    const tabKey = status === 'all' ? 'tab-all' : 'tab-' + status;
+    // ✅ FIXED: replace space with hyphen to match valid HTML id
+    const tabKey = status === 'all' ? 'tab-all' : 'tab-' + status.replace(' ', '-');
     const activeTab = document.getElementById(tabKey);
     if (activeTab) activeTab.classList.add('active-tab');
-
     const cards = document.querySelectorAll('.grievance-card');
     let visibleCount = 0;
     cards.forEach(card => {
       if (status === 'all' || card.dataset.status === status) {
-        card.classList.remove('hidden');
-        visibleCount++;
+        card.classList.remove('hidden'); visibleCount++;
       } else {
         card.classList.add('hidden');
       }
     });
-
-    const noResults = document.getElementById('no-filter-results');
-    if (visibleCount === 0) {
-      noResults.classList.remove('d-none');
-    } else {
-      noResults.classList.add('d-none');
-    }
+    document.getElementById('no-filter-results').classList.toggle('d-none', visibleCount > 0);
   }
 </script>
 {% endblock %}

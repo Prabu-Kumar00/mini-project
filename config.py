@@ -11,7 +11,7 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_size": 5,
     "max_overflow": 2,
 }
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 UPLOAD_FOLDER = 'static/uploads'
 COLLEGE_DOMAIN = 'srec.ac.in'
 MAIL_ADDRESS = os.getenv('MAIL_ADDRESS')

@@ -12,15 +12,117 @@
 
 <body>
 
-  <nav class="navbar navbar-dark bg-primary px-4">
-    <span class="navbar-brand fw-bold"><i class="bi bi-shield-check"></i> Grievance System</span>
+  <nav class="navbar navbar-dark bg-primary px-4" style="position:relative; z-index:1050;">
+    <span class="navbar-brand fw-bold">
+      <i class="bi bi-shield-check"></i> Grievance System
+    </span>
+
     {% if current_user.is_authenticated %}
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-2">
+
+      <div class="dropdown me-2">
+
+  <button class="btn btn-outline-light position-relative"
+          data-bs-toggle="dropdown"
+          onclick="clearNotificationBadge()">
+
+    <i class="bi bi-bell"></i>
+
+    {% set anns = get_announcements() %}
+    {% if anns %}
+    <span id="notificationBadge"
+      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      {{ anns|length }}
+    </span>
+    {% endif %}
+
+  </button>
+
+  <div class="dropdown-menu dropdown-menu-end p-3"
+       style="width:320px; max-height:400px; overflow:auto;">
+
+    <h6 class="fw-bold mb-2">
+      <i class="bi bi-bell"></i> Notifications
+    </h6>
+
+    {% for ann in anns %}
+    <div class="mb-2 pb-2 border-bottom">
+
+      <div class="fw-semibold small text-primary">
+        📢 {{ ann.title }}
+      </div>
+
+      <div class="small text-muted">
+        {{ ann.message }}
+      </div>
+
+      <div class="small text-muted">
+        — {{ ann.staff.name }}
+      </div>
+
+    </div>
+    {% endfor %}
+
+    {% if not anns %}
+    <div class="text-muted small">No announcements</div>
+    {% endif %}
+
+  </div>
+
+</div>
+
       <a href="{{ url_for('community.index') }}" class="btn btn-outline-light btn-sm">
         <i class="bi bi-people-fill"></i> Community
       </a>
-      <span class="text-white small">{{ current_user.name }}</span>
-      <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+
+      <!-- ✅ Profile Dropdown — works for ALL roles -->
+      <div class="dropdown">
+        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                type="button" data-bs-toggle="dropdown">
+
+          <!-- Initials Avatar -->
+          <span style="
+            width:28px; height:28px; border-radius:50%;
+            background:rgba(255,255,255,0.25);
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.75rem; font-weight:700; letter-spacing:0.5px;">
+            {% set words = current_user.name.strip().split() %}
+            {% if words|length >= 2 %}
+              {{ words[0][0]|upper }}{{ words[-1][0]|upper }}
+            {% else %}
+              {{ words[0][0]|upper }}
+            {% endif %}
+          </span>
+
+          <span class="d-none d-md-inline">{{ current_user.name }}</span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-1">
+          <li>
+            <div class="px-3 py-2 border-bottom">
+              <div class="fw-bold small">{{ current_user.name }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">
+                {{ current_user.email }}
+              </div>
+              <span class="badge bg-primary mt-1" style="font-size:0.7rem;">
+                {{ current_user.role | upper }}
+              </span>
+            </div>
+          </li>
+          <li>
+            <a class="dropdown-item py-2" href="{{ url_for('profile.view_profile') }}">
+              <i class="bi bi-person-circle me-2 text-primary"></i> My Profile
+            </a>
+          </li>
+          <li><hr class="dropdown-divider my-1"></li>
+          <li>
+            <a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
     {% endif %}
   </nav>
@@ -39,6 +141,16 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <script>
+    function clearNotificationBadge(){
+      const badge = document.getElementById("notificationBadge");
+      if(badge){
+        badge.style.display = "none";
+      }
+    }
+</script>
+
 </body>
 
 </html>

@@ -55,6 +55,7 @@
           </div>
         </div>
 
+
         <hr class="my-3">
 
         <div class="btn-group w-100 mb-4" role="group">
@@ -206,5 +207,17 @@
     document.getElementById('btn-text').className = 'btn ' + (type === 'text' ? 'btn-primary active' : 'btn-outline-primary');
     document.getElementById('btn-image').className = 'btn ' + (type === 'image' ? 'btn-primary active' : 'btn-outline-primary');
   }
+  
+  function removeAnnouncement(btn){
+    const card = btn.parentElement;
+
+    card.style.transition = "all 0.4s ease";
+    card.style.opacity = "0";
+    card.style.transform = "translateY(-10px)";
+
+    setTimeout(() => {
+        card.remove();
+    }, 400);
+}
 </script>
 {% endblock %}

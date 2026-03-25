@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Staff — GrievanceAI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+
+    .topbar {
+      background: linear-gradient(135deg,#1a4fa0,#1976d2);
+      color:white; padding:1rem 2rem;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .topbar h5 { margin:0; font-weight:700; }
+
+    .card { border:none; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+    .card-header {
+      background:white; border-bottom:1px solid #eee;
+      border-radius:16px 16px 0 0 !important;
+      padding:1.25rem 1.5rem;
+    }
+
+    .badge-role {
+      font-size:0.75rem; padding:0.35rem 0.75rem;
+      border-radius:20px; font-weight:600;
+    }
+    .badge-coordinator  { background:#dbeafe; color:#1d4ed8; }
+    .badge-hod          { background:#dcfce7; color:#166534; }
+    .badge-admin        { background:#fef3c7; color:#92400e; }
+    .badge-discipline   { background:#fce7f3; color:#9d174d; }
+    .badge-coe          { background:#ede9fe; color:#5b21b6; }
+    .badge-accounts     { background:#ffedd5; color:#c2410c; }
+    .badge-hostel_warden{ background:#e0f2fe; color:#0369a1; }
+
+    .no-ac-notice {
+      background: #fff3cd;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="d-flex align-items-center gap-3">
+    <a href="/admin" class="text-white text-decoration-none fs-5">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h5 class="mb-0"><i class="bi bi-people me-2"></i>Manage Staff</h5>
+  </div>
+  <span class="opacity-75 small">{{ current_user.name }} · {{ current_user.role | upper }}</span>
+</div>
+
+<div class="container py-4">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }} rounded-3">{{ message }}</div>
+  {% endfor %}
+  {% endwith %}
+
+  <div class="row g-4">
+
+    <!-- ── ADD STAFF FORM ── -->
+    {% if can_add %}
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0 fw-bold">
+            <i class="bi bi-person-plus me-2 text-primary"></i>
+            {% if current_user.role|lower == "hod"%}
+              Add Academic Coordinator
+            {% else %}
+              Add New Staff
+            {% endif %}
+          </h6>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST" action="/admin/staff/add">
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Full Name</label>
+              <input type="text" name="name" class="form-control"
+                     placeholder="e.g. Dr. Lavanya" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">College Email</label>
+              <input type="email" name="email" class="form-control"
+                     placeholder="name@srec.ac.in" required>
+            </div>
+
+            {% if current_user.role|lower == "admin" %}
+            <!-- Admin picks role + dept freely -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Role</label>
+              <select name="role" class="form-select" id="roleSelect" onchange="toggleDept()">
+                <option value="coordinator">Academic Coordinator</option>
+                <option value="hod">HOD</option>
+                <option value="coe">COE</option>
+                <option value="accounts">Accounts</option>
+                <option value="hostel_warden">Hostel Warden</option>
+                <option value="discipline">Discipline Head</option>
+              </select>
+            </div>
+
+            <div class="mb-3" id="deptDiv">
+              <label class="form-label fw-semibold small">Department</label>
+              <select name="department" class="form-select">
+                <option value="">— None —</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="IT">IT</option>
+                <option value="MECH">MECH</option>
+                <option value="CIVIL">CIVIL</option>
+                <option value="EIE">EIE</option>
+                <option value="BME">BME</option>
+                <option value="AERO">AERO</option>
+                <option value="RA">RA</option>
+                <option value="AIDS">AIDS</option>
+                <option value="PG">PG</option>
+                <option value="MBA">MBA</option>
+                <option value="NANO">NANO</option>
+              </select>
+            </div>
+
+            {% else %}
+            <!-- HOD — role and dept auto-locked to their own dept -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Role</label>
+              <input type="text" class="form-control bg-light"
+                     value="Academic Coordinator" disabled>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Department</label>
+              <input type="text" class="form-control bg-light"
+                     value="{{ current_user.department }}" disabled>
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Password</label>
+              <input type="text" name="password" class="form-control" value="coord123">
+              <div class="form-text text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Share this with the coordinator after creating.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold">
+              <i class="bi bi-plus-circle me-1"></i>
+              {% if current_user.role == "hod" %}
+                Create Coordinator Account
+              {% else %}
+                Add Staff
+              {% endif %}
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- Non-academic HOD — show notice -->
+    <div class="col-lg-4">
+      <div class="no-ac-notice">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>No Academic Coordinators</strong><br>
+        <span class="small">
+          The <strong>{{ current_user.department }}</strong>
+          department does not use Academic Coordinators.
+        </span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ── STAFF LIST ── -->
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 fw-bold">
+            <i class="bi bi-list-ul me-2 text-primary"></i>
+            {% if current_user.role == "hod" %}
+              Coordinators — {{ current_user.department }} ({{ staff_list|length }})
+            {% else %}
+              All Staff ({{ staff_list|length }})
+            {% endif %}
+          </h6>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="px-4 py-3">Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Department</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in staff_list %}
+                <tr>
+                  <td class="px-4 py-3 fw-semibold">{{ s.name }}</td>
+                  <td class="text-muted small">{{ s.email }}</td>
+                  <td>
+                    <span class="badge-role badge-{{ s.role }}">
+                      {{ s.role | upper }}
+                    </span>
+                  </td>
+                  <td class="text-muted small">{{ s.department or '—' }}</td>
+                  <td>
+                    {% if can_add %}
+                    <form method="POST" action="/admin/staff/delete/{{ s.id }}"
+                          onsubmit="return confirm('Delete {{ s.name }}?')">
+                      <button class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox me-2"></i>No staff added yet.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function toggleDept() {
+    const role    = document.getElementById('roleSelect').value;
+    const deptDiv = document.getElementById('deptDiv');
+    const noDept  = ['coe', 'accounts', 'hostel_warden', 'discipline'];
+    deptDiv.style.display = noDept.includes(role) ? 'none' : 'block';
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

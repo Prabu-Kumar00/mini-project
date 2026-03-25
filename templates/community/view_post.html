@@ -28,11 +28,13 @@
       <!-- Actions -->
       <div class="d-flex flex-column gap-1 align-items-end">
         <!-- Upvote -->
-        <form method="POST" action="{{ url_for('community.upvote_post', post_id=post.id) }}">
-          <button class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-arrow-up-circle"></i> {{ post.upvotes }} Upvote
-          </button>
-        </form>
+        {% if current_user.role == "student" %}
+<form method="POST" action="{{ url_for('community.upvote_post', post_id=post.id) }}">
+  <button class="btn btn-outline-primary btn-sm">
+    <i class="bi bi-arrow-up-circle"></i> {{ post.upvotes }} Upvote
+  </button>
+</form>
+{% endif %}
 
         {% if post.student_id == current_user.id %}
           <!-- Resolve -->
@@ -76,11 +78,13 @@
             {{ reply.created_at.strftime('%d %b %Y, %I:%M %p') }}
           </p>
         </div>
-        <form method="POST" action="{{ url_for('community.upvote_reply', reply_id=reply.id) }}">
-          <button class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-up-circle"></i> {{ reply.upvotes }}
-          </button>
-        </form>
+        {% if current_user.role == "student" %}
+<form method="POST" action="{{ url_for('community.upvote_reply', reply_id=reply.id) }}">
+  <button class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-up-circle"></i> {{ reply.upvotes }}
+  </button>
+</form>
+{% endif %}
       </div>
     </div>
   </div>

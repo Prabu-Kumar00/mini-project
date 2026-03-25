@@ -6,269 +6,165 @@
   <title>Login — GrievanceAI</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a4fa0 0%, #1565c0 50%, #1976d2 100%);
+      background: linear-gradient(135deg, #0f2d6e 0%, #1565c0 60%, #1976d2 100%);
       font-family: 'Segoe UI', sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
 
-    /* ── Orbs ── */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .orb-1 {
-      width: 400px; height: 400px;
-      background: rgba(255, 255, 255, 0.08);
-      top: -100px; left: -100px;
-    }
-    .orb-2 {
-      width: 300px; height: 300px;
-      background: rgba(255, 255, 255, 0.06);
-      bottom: -80px; right: -80px;
-    }
+    .orb { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+    .orb-1 { width:500px; height:500px; background:rgba(255,255,255,0.07); top:-150px; left:-150px; }
+    .orb-2 { width:400px; height:400px; background:rgba(100,180,255,0.08); bottom:-100px; right:-100px; }
+    .orb-3 { width:300px; height:300px; background:rgba(128,90,213,0.07); top:40%; left:40%; }
 
-    /* ── Floating Icons ── */
-    .floating-icons {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .float-icon {
-      position: absolute;
-      animation: floatUp linear infinite;
-    }
+    .floating-icons { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .float-icon { position:absolute; animation:floatUp linear infinite; }
     @keyframes floatUp {
-      0%   { transform: translateY(100vh) rotate(0deg);   opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
-      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+      0%   { transform:translateY(100vh) rotate(0deg); opacity:0; }
+      10%  { opacity:1; }
+      90%  { opacity:1; }
+      100% { transform:translateY(-100px) rotate(360deg); opacity:0; }
     }
 
-    /* ── Back Home ── */
     .back-home {
-      position: fixed;
-      top: 1.5rem; left: 1.5rem;
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      font-size: 0.9rem;
-      z-index: 10;
-      transition: color 0.2s;
-      font-weight: 500;
+      position:fixed; top:1.5rem; left:1.5rem;
+      color:rgba(255,255,255,0.7); text-decoration:none;
+      font-size:0.9rem; z-index:10; transition:color 0.2s; font-weight:500;
     }
-    .back-home:hover { color: #ffffff; }
+    .back-home:hover { color:#fff; }
 
-    /* ── Wrapper ── */
+    /* ── Main Wrapper ── */
     .wrapper {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 700px;
-      padding: 1rem;
+      position: relative; z-index: 1;
+      width: 100%; max-width: 780px;
+      padding: 2rem;
+      text-align: center;
     }
 
     /* ── Brand ── */
-    .brand {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+    .brand { margin-bottom: 2.5rem; }
     .brand .icon-wrap {
-      width: 64px; height: 64px;
-      background: rgba(255,255,255,0.2);
-      border: 2px solid rgba(255,255,255,0.4);
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      color: white;
-      margin-bottom: 0.75rem;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      width: 70px; height: 70px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: white;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
-    .brand h2 {
-      color: white;
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin: 0;
-      letter-spacing: -0.5px;
-    }
-    .brand p {
-      color: rgba(255,255,255,0.75);
-      margin: 0.3rem 0 0;
-      font-size: 1rem;
-    }
+    .brand h2 { color:white; font-size:2rem; font-weight:900; margin:0; letter-spacing:-0.5px; }
+    .brand p  { color:rgba(255,255,255,0.55); margin:0.3rem 0 0; font-size:0.95rem; }
 
     /* ── Role Grid ── */
     .role-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 0.5rem;
     }
     .role-card {
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.25);
-      border-radius: 16px;
-      padding: 1.75rem 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 2rem 1rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.25s;
       color: white;
-      text-decoration: none;
     }
     .role-card:hover {
-      background: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.2);
       border-color: rgba(255,255,255,0.6);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-      color: white;
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     }
     .role-card .role-icon {
-      width: 60px; height: 60px;
+      width: 64px; height: 64px;
       border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
+      background: rgba(255,255,255,0.15);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin-bottom: 1rem;
     }
-    .role-card h6 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin: 0 0 0.3rem;
-    }
-    .role-card p {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.65);
-      margin: 0;
-    }
+    .role-card h6 { font-size: 1rem; font-weight: 700; margin: 0 0 0.3rem; }
+    .role-card p  { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin: 0; }
 
     /* ── Login Card ── */
     .login-card {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.1);
       backdrop-filter: blur(20px);
-      border: 1.5px solid rgba(255,255,255,0.25);
+      border: 1.5px solid rgba(255,255,255,0.2);
       border-radius: 20px;
       padding: 2.5rem;
       box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+      text-align: left;
     }
-
     .role-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 20px;
-      padding: 0.4rem 1rem;
-      color: white;
-      font-size: 0.9rem;
-      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 0.4rem 1rem;
+      color: white; font-size: 0.9rem; font-weight: 600;
       margin-bottom: 1.5rem;
     }
-
-    /* ── Form ── */
-    .form-label {
-      color: rgba(255,255,255,0.85);
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
+    .form-label { color:rgba(255,255,255,0.85); font-size:0.9rem; font-weight:600; }
     .form-control {
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.25);
-      border-radius: 10px;
-      color: white;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 10px; color: white;
+      padding: 0.75rem 1rem; font-size: 0.95rem;
     }
-    .form-control::placeholder { color: rgba(255,255,255,0.4); }
+    .form-control::placeholder { color:rgba(255,255,255,0.35); }
     .form-control:focus {
-      background: rgba(255,255,255,0.18);
-      border-color: rgba(255,255,255,0.7);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.6);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
       color: white;
     }
-
-    /* ── Button ── */
     .btn-login {
-      background: #ffffff;
-      color: #1a4fa0;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.75rem;
-      width: 100%;
-      transition: all 0.2s;
-      margin-top: 0.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      background: #fff; color: #1a4fa0;
+      border: none; border-radius: 10px;
+      font-weight: 700; font-size: 1rem;
+      padding: 0.75rem; width: 100%;
+      transition: all 0.2s; margin-top: 0.5rem;
     }
     .btn-login:hover {
-      background: #e3f0ff;
-      color: #1a4fa0;
+      background: #e3f0ff; color: #1a4fa0;
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
-
-    /* ── Back btn ── */
     .back-btn {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.65);
-      cursor: pointer;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      padding: 0;
-      transition: color 0.2s;
+      background: none; border: none;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      font-size: 0.9rem; margin-bottom: 1.5rem;
+      padding: 0; transition: color 0.2s;
     }
     .back-btn:hover { color: white; }
+    hr { border-color: rgba(255,255,255,0.15); }
+    .register-link { text-align:center; color:rgba(255,255,255,0.6); font-size:0.9rem; }
+    .register-link a { color:#fff; text-decoration:none; font-weight:700; }
+    .register-link a:hover { text-decoration:underline; }
+    .alert { border-radius:10px; font-size:0.85rem; padding:0.6rem 1rem; margin-bottom:0.75rem; }
 
-    hr { border-color: rgba(255,255,255,0.2); }
-
-    .register-link {
-      text-align: center;
-      color: rgba(255,255,255,0.65);
-      font-size: 0.95rem;
-    }
-    .register-link a {
-      color: #ffffff;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .register-link a:hover { text-decoration: underline; }
-
-    .alert {
-      border-radius: 10px;
-      font-size: 0.9rem;
-      padding: 0.7rem 1rem;
-      margin-bottom: 1rem;
-    }
-
-    @media (max-width: 480px) {
+    @media (max-width: 600px) {
       .role-grid { grid-template-columns: 1fr; }
       .login-card { padding: 1.5rem; }
     }
   </style>
 </head>
-
 <body>
 
   <a href="/" class="back-home"><i class="bi bi-arrow-left"></i> Home</a>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
   <div class="floating-icons" id="iconMesh"></div>
 
   <div class="wrapper">
@@ -280,34 +176,29 @@
       <p id="brandSubtitle">SREC College Grievance Management System</p>
     </div>
 
-    <!-- SCREEN 1: Role Selection -->
+    <!-- SCREEN 1: Role Cards -->
     <div id="roleScreen">
       <div class="role-grid">
-        <div class="role-card" onclick="handleRoleClick('student','🎓 Student','Submit and track your grievances')">
-          <div class="role-icon" style="background:rgba(255,255,255,0.15)">🎓</div>
+        <div class="role-card" onclick="handleRoleClick('student','🎓 Student')">
+          <div class="role-icon">🎓</div>
           <h6>Student</h6>
-          <p class="role-desc">Submit and track your grievances</p>
+          <p>Submit & track grievances</p>
         </div>
-        <div class="role-card" onclick="handleRoleClick('coordinator','👨‍🏫 Academic Coordinator','Review and approve grievances')">
-          <div class="role-icon" style="background:rgba(255,255,255,0.15)">👨‍🏫</div>
+        <div class="role-card" onclick="handleRoleClick('coordinator','👨‍🏫 Academic Coordinator')">
+          <div class="role-icon">👨‍🏫</div>
           <h6>Academic Coordinator</h6>
-          <p class="role-desc">Review and approve grievances</p>
+          <p>Review & approve grievances</p>
         </div>
-        <div class="role-card" onclick="handleRoleClick('admin','🛡️ Admin / HOD','Manage and resolve all grievances')">
-          <div class="role-icon" style="background:rgba(255,255,255,0.15)">🛡️</div>
+        <div class="role-card" onclick="handleRoleClick('admin','🛡️ Admin / HOD')">
+          <div class="role-icon">🛡️</div>
           <h6>Admin / HOD</h6>
-          <p class="role-desc">Manage and resolve all grievances</p>
-        </div>
-        <div class="role-card" onclick="handleRoleClick('discipline','⚖️ Disciplinary Head','Handle discipline grievances')">
-          <div class="role-icon" style="background:rgba(255,255,255,0.15)">⚖️</div>
-          <h6>Disciplinary Head</h6>
-          <p class="role-desc">Handle discipline-related grievances</p>
+          <p>Manage & resolve grievances</p>
         </div>
       </div>
     </div>
 
     <!-- SCREEN 2: Login Form -->
-    <div id="loginScreen" style="display:none">
+    <div id="loginScreen" style="display:none;">
       <div class="login-card">
         <button class="back-btn" onclick="showRoles()">
           <i class="bi bi-arrow-left"></i> Back to role selection
@@ -331,6 +222,11 @@
             <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
           </div>
+          <div class="text-end mb-3">
+            <a href="{{ url_for('auth.forgot_password') }}" class="small text-muted">
+             Forgot Password?
+             </a>
+          </div>  
           <button type="submit" class="btn-login">Sign In →</button>
         </form>
 
@@ -345,56 +241,49 @@
 
   <script>
     const ROLE_ACTIONS = {
-      'student': '/login',
+      'student':     '/login',
       'coordinator': '/coordinator/login',
-      'admin': '/admin/login',
-      'discipline': '/discipline/login'
+      'admin':       '/admin/login'
     };
 
-    const params = new URLSearchParams(window.location.search);
-    const action = params.get('action');
+    const params    = new URLSearchParams(window.location.search);
+    const action    = params.get('action');
     const roleParam = params.get('role');
 
     if (action === 'register') {
-      document.querySelectorAll('.role-desc').forEach(p => {
-        p.textContent = 'Click to register';
-      });
+      document.querySelectorAll('.role-card p').forEach(p => p.textContent = 'Click to register');
       document.getElementById('brandSubtitle').textContent = 'Select your role to create an account';
     }
 
-    function handleRoleClick(role, label, desc) {
+    function handleRoleClick(role, label) {
       if (action === 'register') {
-        if (role === 'student') {
-          window.location.href = '/register';
-        } else {
-          alert('Only students can self-register. Staff accounts are created by Admin.');
-        }
+        role === 'student'
+          ? window.location.href = '/register'
+          : alert('Only students can self-register. Staff accounts are created by Admin.');
       } else {
-        showLogin(role, label, desc);
+        showLogin(role, label);
       }
     }
 
-    function showLogin(role, label, desc) {
-      document.getElementById('roleScreen').style.display = 'none';
+    function showLogin(role, label) {
+      document.getElementById('roleScreen').style.display  = 'none';
       document.getElementById('loginScreen').style.display = 'block';
-      document.getElementById('roleBadge').textContent = label;
-      document.getElementById('roleInput').value = role;
-      document.getElementById('loginForm').action = ROLE_ACTIONS[role];
-      document.getElementById('registerLinkDiv').style.display =
-        role === 'student' ? 'block' : 'none';
+      document.getElementById('roleBadge').textContent     = label;
+      document.getElementById('roleInput').value           = role;
+      document.getElementById('loginForm').action          = ROLE_ACTIONS[role];
+      document.getElementById('registerLinkDiv').style.display = role === 'student' ? 'block' : 'none';
     }
 
     function showRoles() {
       document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('roleScreen').style.display = 'block';
+      document.getElementById('roleScreen').style.display  = 'block';
     }
 
     if (roleParam) {
       const roleMap = {
-        'student':     ['student',     '🎓 Student',             'Submit and track your grievances'],
-        'coordinator': ['coordinator', '👨‍🏫 Academic Coordinator', 'Review and approve grievances'],
-        'admin':       ['admin',       '🛡️ Admin / HOD',          'Manage and resolve all grievances'],
-        'discipline':  ['discipline',  '⚖️ Disciplinary Head',    'Handle discipline grievances'],
+        'student':     ['student',     '🎓 Student'],
+        'coordinator': ['coordinator', '👨‍🏫 Academic Coordinator'],
+        'admin':       ['admin',       '🛡️ Admin / HOD'],
       };
       const r = roleMap[roleParam];
       if (r) showLogin(...r);
@@ -405,15 +294,15 @@
       'bi-chat-dots','bi-exclamation-triangle','bi-check-circle','bi-lock','bi-send',
       'bi-clipboard','bi-graph-up','bi-people','bi-envelope','bi-flag','bi-award'];
     const mesh = document.getElementById('iconMesh');
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 25; i++) {
       const icon = document.createElement('i');
       icon.className = `bi ${icons[Math.floor(Math.random() * icons.length)]} float-icon`;
       icon.style.cssText = `
-        left:${Math.random() * 100}%;
-        animation-delay:${Math.random() * 20}s;
-        animation-duration:${15 + Math.random() * 20}s;
-        font-size:${1.2 + Math.random() * 1.5}rem;
-        color:rgba(255,255,255,${0.05 + Math.random() * 0.08});
+        left:${Math.random()*100}%;
+        animation-delay:${Math.random()*20}s;
+        animation-duration:${15+Math.random()*20}s;
+        font-size:${1.2+Math.random()*1.5}rem;
+        color:rgba(255,255,255,${0.04+Math.random()*0.07});
       `;
       mesh.appendChild(icon);
     }

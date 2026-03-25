@@ -1,4 +1,4 @@
-from flask import Flask, render_template   # ✅ added render_template
+from flask import Flask, render_template   
 from flask_login import LoginManager
 from flask_mail import Mail
 from models import db, Student, Staff
@@ -7,9 +7,14 @@ from routes.student import student
 from routes.coordinator import coordinator
 from routes.admin import admin
 from routes.community import community
+from routes.profile import profile_bp
+from models import db, Student, Staff, Announcement
 from dotenv import load_dotenv
-load_dotenv() 
 import config, os
+
+
+load_dotenv() 
+
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -30,12 +35,46 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
 
+# ─── ANNOUNCEMENTS CONTEXT PROCESSOR ───
+@app.context_processor
+def inject_announcements():
+
+    def get_announcements():
+        from flask_login import current_user
+        from models import Announcement
+        from sqlalchemy import or_
+
+        if not current_user.is_authenticated:
+            return []
+
+        # Only show to students
+        if current_user.role == "student":
+            anns = Announcement.query.filter(
+                Announcement.is_active == True,
+                or_(
+                    Announcement.target_dept == "ALL",
+                    Announcement.target_dept == current_user.department
+                )
+            ).order_by(Announcement.posted_at.desc()).limit(3).all()
+
+            return anns
+
+        return []
+
+    return {"get_announcements": get_announcements}
+
+
+# ─── FLASK LOGIN USER LOADER ───
 @login_manager.user_loader
 def load_user(user_id):
+    from models import Student, Staff
+
     if user_id.startswith("s_"):
-        return db.session.get(Student, int(user_id[2:]))
-    elif user_id.startswith("f_"):
-        return db.session.get(Staff, int(user_id[2:]))
+        return Student.query.get(int(user_id[2:]))
+
+    if user_id.startswith("f_"):
+        return Staff.query.get(int(user_id[2:]))
+
     return None
 
 # ✅ Homepage route — serves index.html
@@ -60,6 +99,7 @@ app.register_blueprint(student)
 app.register_blueprint(coordinator)
 app.register_blueprint(admin)
 app.register_blueprint(community)
+app.register_blueprint(profile_bp)
 
 with app.app_context():
     db.create_all()
