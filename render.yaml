@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: GrievanceAI
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --timeout 120 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MAIL_ADDRESS
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.0
