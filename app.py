@@ -102,7 +102,11 @@ app.register_blueprint(community)
 app.register_blueprint(profile_bp)
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+        print("✅ Database tables verified.")
+    except Exception as e:
+        print(f"⚠️  db.create_all() failed (DB may be cold-starting): {e}")
 
 if __name__ == "__main__":
     app.run(debug=True)
