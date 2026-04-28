@@ -4,10 +4,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>College Grievance System</title>
+
+  <!-- ═══ SEO: Title & Description ═══ -->
+  <title>{% block title %}GrievanceAI — SREC Grievance Management System{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}GrievanceAI is an AI-powered grievance management system for Sri Ramakrishna Engineering College (SREC), Coimbatore. Submit, track, and resolve student grievances instantly.{% endblock %}">
+  <meta name="keywords" content="GrievanceAI, SREC, Sri Ramakrishna Engineering College, student grievance, complaint portal, Coimbatore college, AI grievance system">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GrievanceAI — SREC">
+
+  <!-- ═══ SEO: Canonical URL ═══ -->
+  <link rel="canonical" href="https://greivanceinfo.in{{ request.path }}">
+
+  <!-- ═══ SEO: Open Graph (Facebook / WhatsApp) ═══ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GrievanceAI">
+  <meta property="og:title" content="{% block og_title %}GrievanceAI — SREC Grievance Management System{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}AI-powered grievance portal for Sri Ramakrishna Engineering College students. Submit grievances, get them classified and routed instantly.{% endblock %}">
+  <meta property="og:url" content="https://greivanceinfo.in{{ request.path }}">
+
+  <!-- ═══ SEO: Google Search Console Verification ═══ -->
+  <!-- TODO: Replace PASTE_YOUR_CODE_HERE with the actual code from Google Search Console -->
+  <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+  {% block extra_head %}{% endblock %}
 </head>
 
 <body>

@@ -77,7 +77,50 @@ def load_user(user_id):
 
     return None
 
-# ✅ Homepage route — serves index.html
+# ═══ SEO: robots.txt ═══
+@app.route("/robots.txt")
+def robots_txt():
+    content = """User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /coordinator
+Disallow: /status
+Disallow: /profile
+Disallow: /test-gemini
+Sitemap: https://greivanceinfo.in/sitemap.xml
+"""
+    return content, 200, {"Content-Type": "text/plain; charset=utf-8"}
+
+
+# ═══ SEO: sitemap.xml ═══
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    from datetime import date
+    today = date.today().isoformat()
+    base  = "https://greivanceinfo.in"
+    pages = [
+        {"loc": "/",               "priority": "1.0", "changefreq": "weekly"},
+        {"loc": "/login",          "priority": "0.9", "changefreq": "monthly"},
+        {"loc": "/register",       "priority": "0.8", "changefreq": "monthly"},
+        {"loc": "/forgot-password","priority": "0.4", "changefreq": "yearly"},
+    ]
+    urls = ""
+    for page in pages:
+        urls += f"""
+  <url>
+    <loc>{base}{page['loc']}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>{page['changefreq']}</changefreq>
+    <priority>{page['priority']}</priority>
+  </url>"""
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}
+</urlset>"""
+    return xml, 200, {"Content-Type": "application/xml"}
+
+
+# ═══ Homepage route — serves index.html ═══
 @app.route("/")
 def index():
     return render_template("index.html")
