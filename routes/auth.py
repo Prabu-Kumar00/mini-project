@@ -26,7 +26,7 @@ def login():
 
     if request.method == "POST":
 
-        email = request.form.get("email")
+        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password")
 
         # 🚨 FIRST check if this email belongs to staff
@@ -54,7 +54,7 @@ def login():
 @auth.route("/coordinator/login", methods=["GET", "POST"])
 def coordinator_login():
     if request.method == "POST":
-        email    = request.form.get("email")
+        email    = request.form.get("email", "").strip().lower()
         password = request.form.get("password")
         staff    = Staff.query.filter_by(email=email, role="coordinator").first()
         if staff and check_password_hash(staff.password, password):
@@ -74,7 +74,7 @@ def admin_login():
 
     if request.method == "POST":
 
-        email = request.form.get("email")
+        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password")
 
         staff = Staff.query.filter_by(email=email).first()
@@ -103,7 +103,7 @@ def admin_login():
 @auth.route("/discipline/login", methods=["GET", "POST"])
 def discipline_login():
     if request.method == "POST":
-        email    = request.form.get("email")
+        email    = request.form.get("email", "").strip().lower()
         password = request.form.get("password")
         staff    = Staff.query.filter_by(email=email, role="discipline").first()
         if staff and check_password_hash(staff.password, password):
@@ -121,7 +121,7 @@ def discipline_login():
 @auth.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        email = request.form.get("email")
+        email = request.form.get("email", "").strip().lower()
         if not valid_email(email):
             flash(f"Please use your college email ({COLLEGE_DOMAIN})", "danger")
             return redirect(url_for("auth.register"))
