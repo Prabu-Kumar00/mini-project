@@ -129,10 +129,18 @@ def manage_staff():
         ).order_by(Staff.role, Staff.department).all()
         can_add = True
 
+    # Pass list of students in dept so HOD can assign them during coordinator creation
+    dept_students = []
+    if current_user.role.lower() == "hod":
+        dept_students = Student.query.filter_by(
+            department=current_user.department
+        ).order_by(Student.roll_no).all()
+
     return render_template(
         "admin/manage_staff.html",
         staff_list=staff_list,
-        can_add=can_add
+        can_add=can_add,
+        dept_students=dept_students
     )
 
 
@@ -171,7 +179,19 @@ def add_staff():
     )
     db.session.add(staff)
     db.session.commit()
-    flash(f"✅ {name} added! Email: {email} | Password: {password}", "success")
+
+    # ─── Assign selected students as tutees ───
+    student_ids = request.form.getlist("student_ids")
+    if student_ids:
+        for sid in student_ids:
+            s = Student.query.get(int(sid))
+            if s:
+                s.tutor_id = staff.id
+        db.session.commit()
+
+    assigned_count = len(student_ids)
+    flash(f"✅ {name} added! Email: {email} | Password: {password}" +
+          (f" | {assigned_count} student(s) assigned." if assigned_count else ""), "success")
     return redirect(url_for("admin.manage_staff"))
 
 
@@ -185,3 +205,37 @@ def delete_staff(staff_id):
     db.session.commit()
     flash(f"🗑️ {staff.name} removed.", "warning")
     return redirect(url_for("admin.manage_staff"))
+
+
+# ── ASSIGN STUDENTS TO COORDINATOR ──
+@admin.route("/admin/staff/<int:staff_id>/assign", methods=["GET", "POST"])
+@login_required
+@admin_required
+def assign_students(staff_id):
+    staff = Staff.query.get_or_404(staff_id)
+
+    if request.method == "POST":
+        # Unassign all students currently linked to this coordinator
+        Student.query.filter_by(tutor_id=staff_id).update({"tutor_id": None})
+        # Assign newly selected students
+        student_ids = request.form.getlist("student_ids")
+        for sid in student_ids:
+            s = Student.query.get(int(sid))
+            if s:
+                s.tutor_id = staff_id
+        db.session.commit()
+        flash(f"✅ Students re-assigned to {staff.name} successfully.", "success")
+        return redirect(url_for("admin.manage_staff"))
+
+    # GET: show the assignment page
+    dept_students = Student.query.filter_by(
+        department=staff.department
+    ).order_by(Student.roll_no).all()
+    assigned_ids = {s.id for s in Student.query.filter_by(tutor_id=staff_id).all()}
+
+    return render_template(
+        "admin/assign_students.html",
+        staff=staff,
+        dept_students=dept_students,
+        assigned_ids=assigned_ids
+    )

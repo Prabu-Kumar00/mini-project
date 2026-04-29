@@ -147,9 +147,16 @@ app.register_blueprint(profile_bp)
 with app.app_context():
     try:
         db.create_all()
-        print("✅ Database tables verified.")
+        # ─── Run any pending column migrations ───
+        from sqlalchemy import text
+        with db.engine.connect() as conn:
+            conn.execute(text(
+                "ALTER TABLE student ADD COLUMN IF NOT EXISTS tutor_id INTEGER REFERENCES staff(id) ON DELETE SET NULL;"
+            ))
+            conn.commit()
+        print("✅ Database tables verified and migrations applied.")
     except Exception as e:
-        print(f"⚠️  db.create_all() failed (DB may be cold-starting): {e}")
+        print(f"⚠️  Startup DB step failed (DB may be cold-starting): {e}")
 
 if __name__ == "__main__":
     app.run(debug=True)

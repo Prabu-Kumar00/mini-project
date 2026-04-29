@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import db, Grievance, Staff
+from models import db, Grievance, Staff, Student
 from email_helper import send_grievance_update
 from datetime import datetime
 from functools import wraps
@@ -128,8 +128,24 @@ def coordinator_required(f):
 @login_required
 @coordinator_required
 def dashboard():
-    grievances = Grievance.query.order_by(Grievance.submitted_at.desc()).all()
-    return render_template("coordinator/dashboard.html", grievances=grievances)
+    # Get students assigned to this coordinator (tutees)
+    assigned_students = Student.query.filter_by(tutor_id=current_user.id).all()
+
+    if assigned_students:
+        # Only show grievances from this coordinator's assigned students
+        student_ids = [s.id for s in assigned_students]
+        grievances = Grievance.query.filter(
+            Grievance.student_id.in_(student_ids)
+        ).order_by(Grievance.submitted_at.desc()).all()
+    else:
+        # No students assigned yet → show all (backward compatible)
+        grievances = Grievance.query.order_by(Grievance.submitted_at.desc()).all()
+
+    return render_template(
+        "coordinator/dashboard.html",
+        grievances=grievances,
+        assigned_students=assigned_students
+    )
 
 
 # ─── ACTION ───

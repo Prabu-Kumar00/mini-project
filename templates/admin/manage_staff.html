@@ -147,12 +147,35 @@
 
             <div class="mb-3">
               <label class="form-label fw-semibold small">Password</label>
-              <input type="text" name="password" class="form-control" value="coord123">
+              <input type="text" name="password" class="form-control" value="srec1234">
               <div class="form-text text-muted">
                 <i class="bi bi-info-circle me-1"></i>
                 Share this with the coordinator after creating.
               </div>
             </div>
+
+            {% if dept_students %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">
+                <i class="bi bi-people me-1 text-primary"></i>Assign Students (Optional)
+              </label>
+              <div style="max-height:200px; overflow-y:auto; border:1.5px solid #dee2e6; border-radius:8px; padding:0.6rem;">
+                {% for student in dept_students %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox"
+                         name="student_ids" value="{{ student.id }}"
+                         id="stu_{{ student.id }}">
+                  <label class="form-check-label small" for="stu_{{ student.id }}">
+                    <span class="fw-semibold">{{ student.roll_no }}</span> — {{ student.name }}
+                  </label>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="form-text text-muted mt-1">
+                <i class="bi bi-info-circle me-1"></i>Selected students will be assigned to this coordinator.
+              </div>
+            </div>
+            {% endif %}
 
             <button type="submit" class="btn btn-primary w-100 fw-bold">
               <i class="bi bi-plus-circle me-1"></i>
@@ -219,9 +242,17 @@
                   </td>
                   <td class="text-muted small">{{ s.department or '—' }}</td>
                   <td>
+                    {% if s.role == 'coordinator' %}
+                    <a href="{{ url_for('admin.assign_students', staff_id=s.id) }}"
+                       class="btn btn-sm btn-outline-primary rounded-pill me-1"
+                       title="Manage assigned students">
+                      <i class="bi bi-people me-1"></i>Students
+                    </a>
+                    {% endif %}
                     {% if can_add %}
                     <form method="POST" action="/admin/staff/delete/{{ s.id }}"
-                          onsubmit="return confirm('Delete {{ s.name }}?')">
+                          onsubmit="return confirm('Delete {{ s.name }}?')"
+                          style="display:inline;">
                       <button class="btn btn-sm btn-outline-danger rounded-pill">
                         <i class="bi bi-trash"></i>
                       </button>

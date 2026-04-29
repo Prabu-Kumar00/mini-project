@@ -18,8 +18,9 @@ class Student(UserMixin, db.Model):
     strike_count = db.Column(db.Integer, default=0)
     is_blocked = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(20), default="student")
-    phone = db.Column(db.String(15), nullable=True)          # ✅ NEW
-    name_updated = db.Column(db.Boolean, default=False)      # ✅ NEW
+    phone = db.Column(db.String(15), nullable=True)
+    name_updated = db.Column(db.Boolean, default=False)
+    tutor_id = db.Column(db.Integer, db.ForeignKey("staff.id"), nullable=True)  # ✅ Tutor/Coordinator assignment
 
     def get_id(self):
         return f"s_{self.id}"

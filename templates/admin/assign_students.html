@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Assign Students — {{ staff.name }} | GrievanceAI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+
+    .topbar {
+      background: linear-gradient(135deg, #1a4fa0, #1976d2);
+      color: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar h5 { margin: 0; font-weight: 700; }
+
+    .card { border: none; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+    .student-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 1rem; border-radius: 10px;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+    .student-item:hover { background: #f0f4ff; }
+    .student-item input[type="checkbox"] {
+      width: 18px; height: 18px; cursor: pointer; accent-color: #1a4fa0;
+    }
+    .student-item.assigned { background: #eef4ff; border-left: 3px solid #1a4fa0; }
+
+    .roll-badge {
+      background: #dbeafe; color: #1d4ed8;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.55rem; border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .select-actions { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="d-flex align-items: center; gap-3">
+    <a href="/admin/staff" class="text-white text-decoration-none fs-5 me-3">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h5 class="mb-0">
+      <i class="bi bi-people me-2"></i>Assign Students — {{ staff.name }}
+    </h5>
+  </div>
+  <span class="opacity-75 small">{{ staff.department }} · COORDINATOR</span>
+</div>
+
+<div class="container py-4" style="max-width: 700px;">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }} rounded-3">{{ message }}</div>
+  {% endfor %}
+  {% endwith %}
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center"
+         style="background: white; border-bottom: 1px solid #eee; border-radius: 16px 16px 0 0; padding: 1.25rem 1.5rem;">
+      <div>
+        <h6 class="mb-0 fw-bold">
+          <i class="bi bi-people me-2 text-primary"></i>
+          Students in {{ staff.department }} ({{ dept_students | length }} total)
+        </h6>
+        <p class="text-muted small mb-0 mt-1">
+          Currently assigned: <strong>{{ assigned_ids | length }}</strong> student(s)
+        </p>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <form method="POST">
+
+        <div class="select-actions">
+          <button type="button" class="btn btn-sm btn-outline-primary"
+                  onclick="document.querySelectorAll('input[name=student_ids]').forEach(c=>c.checked=true)">
+            <i class="bi bi-check2-all me-1"></i>Select All
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary"
+                  onclick="document.querySelectorAll('input[name=student_ids]').forEach(c=>c.checked=false)">
+            <i class="bi bi-x-circle me-1"></i>Clear All
+          </button>
+        </div>
+
+        {% if dept_students %}
+        <div style="max-height: 420px; overflow-y: auto; border: 1.5px solid #dee2e6; border-radius: 10px; padding: 0.5rem;">
+          {% for student in dept_students %}
+          <label class="student-item {{ 'assigned' if student.id in assigned_ids else '' }}"
+                 for="stu_{{ student.id }}">
+            <input type="checkbox" name="student_ids"
+                   value="{{ student.id }}" id="stu_{{ student.id }}"
+                   {{ 'checked' if student.id in assigned_ids else '' }}>
+            <span class="roll-badge">{{ student.roll_no }}</span>
+            <span class="fw-semibold small">{{ student.name }}</span>
+            <span class="text-muted small ms-auto">{{ student.section }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-4">
+          <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+          No registered students found in {{ staff.department }}.
+        </div>
+        {% endif %}
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary fw-bold flex-grow-1">
+            <i class="bi bi-save me-1"></i>Save Assignments
+          </button>
+          <a href="{{ url_for('admin.manage_staff') }}" class="btn btn-outline-secondary">
+            Cancel
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
